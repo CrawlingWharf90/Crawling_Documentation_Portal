@@ -796,6 +796,9 @@
       font-size: 1.08em
     }
 
+    .md .mermaid { background: var(--code); border: 1px solid var(--bd); border-radius: 8px; padding: 14px; margin-bottom: 14px; text-align: center; overflow-x: auto; white-space: pre; font: 12.5px Consolas, monospace; color: var(--mu) }
+    .md .mermaid svg { max-width: 100%; height: auto; display: block; margin: 0 auto }
+    .md .mermaid.texerr { color: var(--dg) }
     .texerr {
       font-family: Consolas, monospace;
       color: var(--dg)
@@ -864,6 +867,10 @@
     }
     .dom.art{color:#c084fc}.item.on.art{background:rgba(192,132,252,.15);box-shadow:inset 3px 0 #c084fc}.card.art{border-top-color:#c084fc}
     .brand:focus-visible{outline:1px solid var(--ac);outline-offset:-2px}
+    .aw{position:relative;flex:1}.aw #add{width:100%}
+    #addmenu{position:absolute;bottom:calc(100% + 6px);left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:4px;z-index:5;box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+    #addmenu button{display:block;width:100%;text-align:left;background:0;border:0;padding:8px 10px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:500}
+    #addmenu button:hover{background:rgba(255,255,255,.07)}
   </style>
 </head>
 
@@ -875,7 +882,7 @@
       <div class="st"><span id="count">Loading…</span><a id="tgl">Expand/Collapse</a></div>
     </div>
     <div id="tree"></div>
-    <div class="foot"><button id="add" class="pri">➕ Add docs</button>
+    <div class="foot"><div class="aw"><button id="add" class="pri">➕ Add docs ▴</button><div id="addmenu" hidden><button data-add="up">📁 Upload Local File</button><button data-add="new">📄 New File</button></div></div>
       <div class="mw"><button id="mbtn" title="Refresh, reorganize, help">☰ ▴</button>
         <div id="menu" hidden><button data-a="refresh">↻ Refresh</button><button data-a="reorg">⇅
             Reorganize</button><button data-a="ide">💻 Editor settings</button><button data-a="help">❓ Help</button>
@@ -1065,7 +1072,7 @@
       if (tk !== S.tk) return;
       const p = pages().find(x => x.file === file);
       $('#view').innerHTML = `<div class="crumb">${esc(p?.crumb || '')}</div><article class="md">${md(t)}</article>`;
-      fixImgs(file); renderMath(); $('main').scrollTop = 0
+      fixImgs(file); renderMath(); renderMermaid(); $('main').scrollTop = 0
     }
 
     function route() {
@@ -1112,7 +1119,8 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
     function md(src) {
       MI = []; const code = [], keep = h => (code.push(h), `\u0000${code.length - 1}\u0000`), mi = h => (MI.push(h), `\u0002${MI.length - 1}\u0002`);
       src = src.replace(/\r/g, '').replace(/^---\n[\s\S]*?\n---\n/, '')
-        .replace(/```([\w-]*)([^\n]*)\n([\s\S]*?)```/g, (_, l, o, c) => keep(l === 'sheet' ? sheet(c, /header/i.test(o)) : `<pre><button class="copy" data-copy>Copy</button><code>${esc(c.replace(/\n$/, ''))}</code></pre>`))
+        .replace(/```([\w-]*)([^\n]*)\n([\s\S]*?)```/g, (_, l, o, c) => keep(l === 'sheet' ? sheet(c, /header/i.test(o)) : /^mermaid$/i.test(l) ? `<div class="mermaid">${esc(c.replace(/\n$/, ''))}</div>` : `<pre><button class="copy" data-copy>Copy</button><code>${esc(c.replace(/\n$/, ''))}</code></pre>`))
+        .replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, (_, css) => '\n' + keep(`<style>${scopeCss(css)}</style>`) + '\n')
         .replace(/`([^`\n]+)`/g, (_, c) => mi(`<code>${esc(c)}</code>`))
         .replace(/\\\$/g, '\u0001')
         .replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => `\n${keep(`<div class="tex" data-d="1">${esc(t.trim())}</div>`)}\n`)
@@ -1242,6 +1250,38 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
         };
         go(0)
       })
+    }
+    // <style> in a doc applies to that page only: selectors are prefixed with the page area, and body/html/:root mean the page area itself
+    function scopeCss(css) {
+      const bad = /url\(|expression|behavior|javascript:|-moz-binding|@import/i;
+      const sc = x => { if (/^(from|to|[\d.]+%)$/i.test(x)) return x; const r = x.replace(/^(?:html\s*)?(?:body|html|:root)(?![\w-])/i, '').trim(); return '#view .md' + (r ? ' ' + r : '') };
+      return css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@import[^;]*;?/gi, '').replace(/</g, '')
+        .replace(/([^{}@]+)\{([^{}]*)\}/g, (m, sel, body) => sel.split(',').map(x => x.trim()).filter(Boolean).map(sc).join(',') + '{' + body.split(';').filter(x => x.trim() && !bad.test(x)).join(';') + '}')
+    }
+
+    /* ---------- Mermaid diagrams: loaded lazily, local copy in _vendor/mermaid/ wins over the CDN ---------- */
+    let mm, mmN = 0;
+    function loadMermaid() {
+      return mm ??= new Promise((ok, no) => {
+        const bases = ['_vendor/mermaid/', 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/'];
+        const go = i => {
+          if (i >= bases.length) return no();
+          const s = document.createElement('script'); s.src = bases[i] + 'mermaid.min.js';
+          s.onload = () => { window.mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict' }); ok(window.mermaid) };
+          s.onerror = () => { s.remove(); go(i + 1) }; document.head.append(s)
+        };
+        go(0)
+      })
+    }
+    async function renderMermaid() {
+      const els = document.querySelectorAll('#view .mermaid'); if (!els.length) return;
+      let m; try { m = await loadMermaid() } catch { mm = null; els.forEach(e => e.classList.add('texerr')); toast('Mermaid could not be loaded (offline?) — showing the diagram source'); return }
+      for (const e of els) {
+        if (e.dataset.done) continue; e.dataset.done = 1;
+        const id = 'mmd' + (++mmN);
+        try { const { svg } = await m.render(id, e.textContent); e.innerHTML = svg }
+        catch (x) { document.getElementById('d' + id)?.remove(); e.classList.add('texerr'); e.title = String(x.message || x) }
+      }
     }
     async function renderMath() {
       const els = document.querySelectorAll('#view .tex'); if (!els.length) return;
@@ -1383,28 +1423,40 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
 
     /* ---------- add docs ---------- */
     const h1 = t => (t.match(/^#\s+(.+)/m) || [])[1];
-    async function addFiles(l) {
+    async function addFiles(l, o = {}) {
       const fs = [...l].filter(f => /\.(md|markdown)$/i.test(f.name));
       if (!fs.length) return toast('Only .md files can be added');
       if (!await ensureWrite() || !S.T) return;
       const one = fs.length === 1;
-      modal(`Add ${one ? 'doc' : fs.length + ' docs'}`, `<div class="hint">${esc(fs.map(f => f.name).join(', '))}</div>
+      modal(`Add ${one ? 'doc' : fs.length + ' docs'}`, `<div class="hint">${o.nw ? 'New page from the template <b>' + esc(pretty(fs[0].name)) + '</b>' : esc(fs.map(f => f.name).join(', '))}</div>
     <label>Section<select id="pd">${DOM.map(d => `<option value="${d}">${IC[d]} ${DT[d]}</option>`).join('')}</select></label>
     <label class="opt" style="margin-top:12px"><input type="radio" name="lv" value="top" checked><span><b>Top level</b> — no parent, listed directly under the section</span></label>
     <label class="opt"><input type="radio" name="lv" value="sub"><span><b>Sub level</b> — next, drag it to the exact spot (child or sibling of any page)</span></label>
-    ${one && S.mode === 'singleFolder' ? '<label>Title<input id="pt"></label>' : ''}`, 'Continue', async r => {
+    ${o.nw ? '<label>Name<input id="pt" placeholder="e.g. Combat System"></label>' : one && S.mode === 'singleFolder' ? '<label>Title<input id="pt"></label>' : ''}`, 'Continue', async r => {
         const dom = r.querySelector('#pd').value, sub = r.querySelector('input[name=lv]:checked').value === 'sub', W = cloneT(S.T), nn = [];
         for (const f of fs) {
-          const text = await f.text(), nm = f.name.replace(/[<>:"/\\|?*]/g, '_');
-          nn.push({ id: ++uid, name: S.mode === 'singleFolder' ? (one && r.querySelector('#pt')?.value.trim()) || h1(text) || pretty(nm) : nm, _new: { text, nm }, children: [] })
+          let text = await f.text(), nm = f.name.replace(/[<>:"/\\|?*]/g, '_'), title = '';
+          if (o.nw) { title = r.querySelector('#pt').value.trim(); if (!title) throw new Error('Enter a name'); text = text.replaceAll('{{title}}', title); nm = title.replace(/[<>:"/\\|?*]/g, '_').replace(/\s+/g, '_') + '.md' }
+          nn.push({ id: ++uid, name: S.mode === 'singleFolder' ? (o.nw ? title : (one && r.querySelector('#pt')?.value.trim()) || h1(text) || pretty(nm)) : nm, _new: { text, nm }, children: [] })
         }
         W[dom].push(...nn);
-        const done = async W => { await commit(W); toast('Added'); openPage(nn[0].file) };
+        const done = async W => { await commit(W); toast(o.nw ? 'Created — press F4 to edit it in your IDE' : 'Added'); openPage(nn[0].file) };
         if (!sub) { await done(W); return }
         arrange('Place the new page' + (one ? '' : 's'), `Drag the highlighted page: drop in the middle of a page to make it a <b>child</b>, on its top/bottom edge to make it a <b>sibling</b>, or on a section bar for the top level.${S.mode === 'folders' ? ' (Folders mode lists siblings alphabetically.)' : ''}`, W, n => !!n._new, 'Add here', done);
         return false
       });
-      const pt = $('#pt'); if (pt) fs[0].text().then(t => pt.value = h1(t) || pretty(fs[0].name))
+      const pt = $('#pt'); if (pt) { if (o.nw) { pt.focus(); pt.onkeydown = e => { if (e.key === 'Enter') $('#modal [data-ok]').click() } } else fs[0].text().then(t => pt.value = h1(t) || pretty(fs[0].name)) }
+    }
+
+    /* ---------- new file from a template (Resources/Markdown inside the docs folder) ---------- */
+    async function newFile() {
+      if (!await ensureWrite() || !S.T) return;
+      const ts = [];
+      try { for await (const [n, h] of (await dirAt(['Resources', 'Markdown'])).entries()) if (h.kind === 'file' && /\.md$/i.test(n)) ts.push(n) } catch { }
+      ts.sort(nat);
+      const go = async n => addFiles([new File([n ? await (await (await fh('Resources/Markdown/' + n)).getFile()).text() : ''], n || 'new_file.md')], { nw: 1 });
+      if (ts.length < 2) return go(ts[0]);
+      modal('Choose a template', `<p class="hint">Templates are the <code>.md</code> files in <code>Resources/Markdown</code>. Add more with <b>Tools → Docs → Create Docs File Template</b> in Unity.</p>` + ts.map((n, i) => `<label class="opt" style="margin-top:8px"><input type="radio" name="tp" value="${esc(n)}"${i ? '' : ' checked'}><span>${esc(pretty(n))}</span></label>`).join(''), 'Continue', async r => { const v = r.querySelector('input[name=tp]:checked').value; setTimeout(() => go(v)) })
     }
 
     /* ---------- delete / reorganize / help ---------- */
@@ -1478,7 +1530,7 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
   <h4>Browsing</h4><ul><li>Use the tree on the left: <b>Design</b>, <b>Art</b> and <b>Scripting</b> hold pages, and any page can have child pages (click the ▶ to expand).</li>
   <li>Press <kbd>/</kbd> to search. The first search indexes all pages, then it is instant. Click a result to open it.</li>
   <li>Links between pages (<code>[text](other.md)</code>) work, and every page has its own address, so you can bookmark it.</li></ul>
-  <h4>Adding pages</h4><ul><li>Click <b>➕ Add docs</b> (or drop <code>.md</code> files onto the window) and pick the file(s).</li>
+  <h4>Adding pages</h4><ul><li>Click <b>➕ Add docs</b> and choose <b>Upload Local File</b> (or drop <code>.md</code> files onto the window), or <b>New File</b> to start from a template: give the page a name and it is created for you.</li><li>Templates are the <code>.md</code> files in <code>Resources/Markdown</code> (with more than one you pick which; <code>{{title}}</code> inside a template is replaced by the name). Create templates in Unity with <b>Tools → Docs → Create Docs File Template</b>.</li>
   <li>Choose the section, then <b>Top level</b> (no parent) or <b>Sub level</b>.</li>
   <li><b>Sub level</b> opens a window: drag the highlighted page onto another page — middle = child, top/bottom edge = sibling — then press <b>Add here</b>.</li>
   <li>The portal refreshes by itself afterwards. The portal copies your file, so keep editing the copy inside the docs folder.</li></ul>
@@ -1488,7 +1540,8 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
   <h4>Reorganizing</h4><ul><li><b>☰ → Reorganize</b> opens the same drag-and-drop window with every page movable. Press <b>Apply</b> to save.</li>
   <li><b>Single Folder mode</b> stores the order in the manifest. <b>Folders mode</b> moves files on disk (children into a folder named after their parent) and sorts siblings alphabetically — prefix names with numbers (<code>01_Intro.md</code>) to control the order.</li></ul>
   <h4>Refresh</h4><ul><li><b>☰ → Refresh</b> re-reads the folder. Use it after editing in your IDE or after a <code>git pull</code>.</li></ul>
-  <h4>Rich content</h4><ul><li><b>HTML</b> works inside pages (tables, <code>&lt;details&gt;</code>, images, <code>style</code> colours). Scripts and unsafe attributes are removed, and markdown is not parsed inside an HTML block.</li>
+  <h4>Rich content</h4><ul><li><b>HTML</b> works inside pages (tables, <code>&lt;details&gt;</code>, images, <code>style</code> colours). A <code>&lt;style&gt;</code> block works too but only affects that page (<code>body</code> means the page area). Scripts and unsafe attributes are removed, and markdown is not parsed inside an HTML block.</li>
+  <li><b>Diagrams:</b> a code block whose language is <code>mermaid</code> (flowcharts, sequence diagrams, ...) is drawn with Mermaid, loaded on first use; put a copy in <code>_vendor/mermaid/</code> to work offline.</li>
   <li><b>Math:</b> <code>$E=mc^2$</code> inline or <code>$$ ... $$</code> as a centred block (KaTeX). It loads on first use; put a copy in <code>_vendor/katex/</code> to work offline. A lone price like <code>$5</code> is left alone; write <code>&#92;$</code> for a literal dollar before another one.</li>
   <li><b>Spreadsheets:</b> use a code block whose language is <code>sheet</code> (add <code>header</code> after it to style the first row). Paste straight from Excel (tab-separated), or write rows with <code>|</code> or commas. Start a cell with <code>=</code> for a formula: <code>+ - * / ^ %</code>, comparisons, cells like <code>B2</code>, ranges like <code>B2:B9</code>, and SUM, AVERAGE, MIN, MAX, COUNT, PRODUCT, ROUND, FLOOR, CEIL, ABS, SQRT, POW, MOD, LOG, LN, EXP, IF, AND, OR, NOT. Hover a result to see its formula.</li></ul>
   <h4>Shortcuts</h4><ul><li><kbd>/</kbd> search · <kbd>F2</kbd> rename page / project · <kbd>F4</kbd> edit in IDE · <kbd>Del</kbd> delete (they act on the page that is open).</li></ul>
@@ -1502,6 +1555,8 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
     document.addEventListener('click', e => {
       const t = e.target; let el;
       if (!t.closest('.mw')) $('#menu').hidden = true;
+      if (!t.closest('.aw')) $('#addmenu').hidden = true;
+      if (el = t.closest('[data-add]')) { $('#addmenu').hidden = true; return el.dataset.add === 'up' ? $('#pick').click() : newFile() }
       if (t.closest('#mbtn')) { $('#menu').hidden = !$('#menu').hidden; return }
       if (el = t.closest('[data-a]')) { $('#menu').hidden = true; const a = el.dataset.a; return a === 'refresh' ? load().then(() => toast('Refreshed')) : a === 'reorg' ? reorganize() : a === 'ide' ? ideDialog(false) : help() }
       if (el = t.closest('[data-open]')) { const sm = el.closest('summary'); if (sm) { e.preventDefault(); sm.parentElement.open = true } return openPage(el.dataset.open) }
@@ -1518,10 +1573,8 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
     $('#brand').ondblclick = () => S.T && nameDialog(false);
     $('#tgl').onclick = () => { S.all = !S.all; S.open.clear(); document.querySelectorAll('details.fold').forEach(d => d.open = S.all) };
     $('#add').onclick = async () => {
-      const had = !!S.root;
-      if (!await ensureWrite()) return;
-      if (!had) return toast('Folder connected — click Add docs again');
-      if (S.T) $('#pick').click()
+      if (!S.root) { if (await ensureWrite()) toast('Folder connected — click Add docs again'); return }
+      if (S.T) $('#addmenu').hidden = !$('#addmenu').hidden
     };
     $('#pick').onchange = e => { addFiles(e.target.files); e.target.value = '' };
     let st; $('#q').oninput = e => { clearTimeout(st); st = setTimeout(() => search(e.target.value), 180) };
@@ -1537,7 +1590,7 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
       if (e.key === 'Delete' && free && !mo && S.cur && S.T) del();
       if (e.key === 'F2' && free && !mo && S.T) { e.preventDefault(); (document.activeElement.id === 'brand' || !S.cur) ? nameDialog(false) : rename() }
       if (e.key === 'F4' && free && !mo && S.cur && S.T) { e.preventDefault(); openIde() }
-      if (e.key === 'Escape') { $('#menu').hidden = true; if (mo && !$('#modal').dataset.nc) $('#modal').hidden = true }
+      if (e.key === 'Escape') { $('#menu').hidden = true; $('#addmenu').hidden = true; if (mo && !$('#modal').dataset.nc) $('#modal').hidden = true }
     });
 
     (async () => {
