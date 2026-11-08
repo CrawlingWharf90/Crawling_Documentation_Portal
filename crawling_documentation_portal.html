@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation</title>
+  <style>
+    :root {
+      --bg: #121215;
+      --side: #19191e;
+      --card: #202027;
+      --code: #0c0c0f;
+      --bd: #2d2d37;
+      --tx: #ececf1;
+      --mu: #9ca3af;
+      --ac: #3b82f6;
+      --dg: #f59e0b
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    [hidden] {
+      display: none !important
+    }
+
+    body {
+      font: 14px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      display: flex;
+      height: 100vh;
+      overflow: hidden
+    }
+
+    button,
+    select,
+    input {
+      font: inherit;
+      color: inherit
+    }
+
+    aside {
+      width: 300px;
+      background: var(--side);
+      border-right: 1px solid var(--bd);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0
+    }
+
+    .brand {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--bd);
+      cursor: pointer
+    }
+
+    .brand b {
+      display: block;
+      font-size: 15.5px;
+      color: #fff
+    }
+
+    .brand small {
+      font-size: 11.5px;
+      color: var(--mu)
+    }
+
+    .sw {
+      padding: 12px 14px 8px
+    }
+
+    #q {
+      width: 100%;
+      padding: 8px 11px;
+      background: var(--code);
+      border: 1px solid var(--bd);
+      border-radius: 6px;
+      font-size: 13px;
+      outline: 0
+    }
+
+    #q:focus {
+      border-color: var(--ac)
+    }
+
+    .st {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--mu);
+      margin-top: 6px
+    }
+
+    .st a {
+      color: var(--ac);
+      cursor: pointer
+    }
+
+    #tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 10px 20px;
+      user-select: none
+    }
+
+    .dom {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: 12px 10px 6px;
+      border-radius: 6px
+    }
+
+    .dom.design {
+      color: var(--dg)
+    }
+
+    .dom.scripting {
+      color: var(--ac)
+    }
+
+    em {
+      font-style: normal;
+      font-size: 10px;
+      color: var(--mu);
+      font-weight: 400
+    }
+
+    .none {
+      font-size: 12px;
+      color: var(--mu);
+      padding: 2px 12px
+    }
+
+    summary {
+      list-style: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      color: #d4d4d8;
+      cursor: pointer;
+      display: flex;
+      gap: 7px;
+      align-items: center
+    }
+
+    summary::-webkit-details-marker {
+      display: none
+    }
+
+    summary i {
+      font-style: normal;
+      font-size: 9px;
+      width: 10px;
+      color: var(--mu);
+      transition: transform .15s
+    }
+
+    details[open]>summary i {
+      transform: rotate(90deg)
+    }
+
+    summary em {
+      margin-left: auto
+    }
+
+    summary:hover,
+    .item:hover {
+      background: rgba(255, 255, 255, .05);
+      color: #fff
+    }
+
+    .kids {
+      padding-left: 12px;
+      margin-left: 12px;
+      border-left: 1px solid rgba(255, 255, 255, .08)
+    }
+
+    .item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: 0;
+      border: 0;
+      color: #d1d5db;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      margin: 1px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .item.on {
+      background: rgba(59, 130, 246, .16);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: inset 3px 0 var(--ac)
+    }
+
+    .item.on.design {
+      background: rgba(245, 158, 11, .15);
+      box-shadow: inset 3px 0 var(--dg)
+    }
+
+    .over {
+      outline: 1px dashed var(--ac);
+      background: rgba(59, 130, 246, .14) !important
+    }
+
+    .foot {
+      padding: 10px 14px;
+      border-top: 1px solid var(--bd);
+      display: flex;
+      gap: 6px
+    }
+
+    .foot #add {
+      flex: 1
+    }
+
+    .btn,
+    .foot button,
+    .ma button {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    .btn:hover,
+    .foot button:hover,
+    .ma button:hover {
+      border-color: var(--ac)
+    }
+
+    .pri {
+      background: var(--ac) !important;
+      border-color: var(--ac) !important;
+      color: #fff !important
+    }
+
+    .big {
+      padding: 10px 20px !important;
+      font-size: 14px !important;
+      margin-top: 18px
+    }
+
+    main {
+      flex: 1;
+      overflow-y: auto
+    }
+
+    #view {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 48px 80px
+    }
+
+    .crumb {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--mu);
+      margin-bottom: 8px
+    }
+
+    .lead {
+      color: var(--mu);
+      font-size: 15.5px;
+      margin-top: 6px
+    }
+
+    .hero h1,
+    .md h1 {
+      font-size: 30px;
+      line-height: 1.25;
+      color: #fff;
+      margin-bottom: 14px
+    }
+
+    .md h2 {
+      font-size: 21px;
+      margin: 30px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--bd);
+      color: #fff
+    }
+
+    .md h3 {
+      font-size: 16.5px;
+      margin: 22px 0 8px;
+      color: #fff
+    }
+
+    .md h4,
+    .md h5,
+    .md h6 {
+      margin: 18px 0 6px;
+      color: #e5e7eb
+    }
+
+    .md p,
+    .md ul,
+    .md ol,
+    .md blockquote,
+    .md pre,
+    .md table {
+      margin-bottom: 14px
+    }
+
+    .md ul,
+    .md ol {
+      padding-left: 24px
+    }
+
+    .md a {
+      color: #93c5fd
+    }
+
+    .md code {
+      background: var(--code);
+      border: 1px solid var(--bd);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font: 12.5px Consolas, "Cascadia Mono", monospace
+    }
+
+    .md pre {
+      position: relative;
+      background: var(--code);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 14px;
+      overflow-x: auto
+    }
+
+    .md pre code {
+      border: 0;
+      padding: 0;
+      background: 0;
+      white-space: pre
+    }
+
+    .copy {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 4px;
+      color: var(--mu);
+      font-size: 11px;
+      padding: 2px 8px;
+      cursor: pointer
+    }
+
+    .copy:hover {
+      color: #fff;
+      border-color: var(--ac)
+    }
+
+    .md blockquote {
+      border-left: 3px solid var(--ac);
+      background: var(--card);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      color: #d1d5db
+    }
+
+    .md table {
+      border-collapse: collapse;
+      display: block;
+      overflow-x: auto
+    }
+
+    .md th,
+    .md td {
+      border: 1px solid var(--bd);
+      padding: 6px 12px;
+      text-align: left
+    }
+
+    .md th {
+      background: var(--card)
+    }
+
+    .md img {
+      max-width: 100%;
+      border-radius: 6px
+    }
+
+    .md hr {
+      border: 0;
+      border-top: 1px solid var(--bd);
+      margin: 24px 0
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-top: 26px
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-top: 3px solid var(--ac);
+      border-radius: 10px;
+      padding: 20px
+    }
+
+    .card.design {
+      border-top-color: var(--dg)
+    }
+
+    .card h2 {
+      font-size: 18px
+    }
+
+    .card p {
+      color: var(--mu);
+      font-size: 13px;
+      margin: 2px 0 10px
+    }
+
+    .card li {
+      list-style: none
+    }
+
+    .card button {
+      background: 0;
+      border: 0;
+      color: #93c5fd;
+      cursor: pointer;
+      padding: 3px 0;
+      text-align: left
+    }
+
+    .card button:hover {
+      color: #fff
+    }
+
+    .hit {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      cursor: pointer
+    }
+
+    .hit:hover {
+      border-color: var(--ac)
+    }
+
+    .hit b {
+      display: block;
+      color: #93c5fd
+    }
+
+    .hit small {
+      color: var(--mu)
+    }
+
+    .hit div {
+      font-size: 13px;
+      color: var(--mu);
+      margin-top: 4px
+    }
+
+    mark {
+      background: rgba(245, 158, 11, .3);
+      color: #fff;
+      border-radius: 2px
+    }
+
+    .mb {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .6);
+      display: grid;
+      place-items: center;
+      z-index: 9
+    }
+
+    .mc {
+      background: var(--side);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 22px;
+      width: min(470px, 92vw)
+    }
+
+    .mc label {
+      display: block;
+      font-size: 12px;
+      color: var(--mu);
+      margin-top: 12px
+    }
+
+    .mc select,
+    .mc input:not([type=radio]) {
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      padding: 7px 10px;
+      background: var(--code);
+      border: 1px solid var(--bd);
+      border-radius: 6px;
+      font-size: 13px
+    }
+
+    .mc #pn {
+      margin-top: 8px
+    }
+
+    .mc .opt {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--tx);
+      font-size: 13px;
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 10px 12px
+    }
+
+    .mc .opt input {
+      margin-top: 5px
+    }
+
+    .hint {
+      font-size: 12.5px;
+      color: var(--mu);
+      margin: 8px 0
+    }
+
+    .ma {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 20px
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--bd);
+      padding: 9px 16px;
+      border-radius: 8px;
+      z-index: 10;
+      font-size: 13px
+    }
+
+    @media(max-width:760px) {
+      body {
+        flex-direction: column
+      }
+
+      aside {
+        width: 100%;
+        height: 42vh
+      }
+
+      #view {
+        padding: 24px 18px
+      }
+
+      .cards {
+        grid-template-columns: 1fr
+      }
+    }
+
+    summary {
+      padding: 0 4px 0 6px
+    }
+
+    summary .item {
+      flex: 1;
+      margin: 1px 0
+    }
+
+    .item.v {
+      color: var(--mu);
+      font-style: italic;
+      cursor: default
+    }
+
+    .mw {
+      position: relative
+    }
+
+    #menu {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      right: 0;
+      min-width: 176px;
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 4px;
+      z-index: 5;
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, .4)
+    }
+
+    #menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: 0;
+      border: 0;
+      padding: 8px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    #menu button:hover {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    .mc.wide {
+      width: min(680px, 94vw);
+      max-height: 86vh;
+      display: flex;
+      flex-direction: column
+    }
+
+    .help {
+      overflow: auto;
+      margin-top: 6px;
+      padding-right: 6px
+    }
+
+    .help h4 {
+      margin: 14px 0 4px;
+      color: #fff;
+      font-size: 14px
+    }
+
+    .help li {
+      font-size: 13px;
+      color: #d1d5db;
+      margin-bottom: 3px
+    }
+
+    .help ul {
+      padding-left: 20px
+    }
+
+    kbd {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 0 6px;
+      font: 12px Consolas, monospace
+    }
+
+    #arr {
+      overflow: auto;
+      flex: 1;
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 8px;
+      background: var(--code);
+      min-height: 240px
+    }
+
+    .ah {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 8px 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px dashed var(--bd);
+      color: var(--mu)
+    }
+
+    .ah.zc {
+      border-color: var(--ac);
+      background: rgba(59, 130, 246, .15);
+      color: #fff
+    }
+
+    .ar {
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin: 2px 0;
+      cursor: grab;
+      background: var(--card);
+      border: 1px solid transparent;
+      font-size: 13px
+    }
+
+    .ar.lk {
+      cursor: default;
+      opacity: .7;
+      background: transparent
+    }
+
+    .ar.nw {
+      background: rgba(59, 130, 246, .22);
+      border-color: var(--ac);
+      color: #fff;
+      font-weight: 600;
+      opacity: 1
+    }
+
+    .ar.zb {
+      border-top: 2px solid var(--ac)
+    }
+
+    .ar.za {
+      border-bottom: 2px solid var(--ac)
+    }
+
+    .ar.zc {
+      outline: 2px dashed var(--ac)
+    }
+
+    .ak {
+      margin-left: 20px;
+      border-left: 1px solid var(--bd);
+      padding-left: 8px
+    }
+
+    .md details {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-bottom: 14px
+    }
+
+    .md summary {
+      display: list-item;
+      list-style: revert;
+      padding: 0;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    .md summary::-webkit-details-marker {
+      display: revert
+    }
+
+    .md summary:hover {
+      background: 0
+    }
+
+    .md center {
+      display: block;
+      text-align: center;
+      margin-bottom: 14px
+    }
+
+    .md mark {
+      color: #fff
+    }
+
+    .md kbd {
+      font-size: 12px
+    }
+
+    div.tex {
+      overflow-x: auto;
+      margin: 0 0 14px;
+      text-align: center
+    }
+
+    .tex .katex {
+      font-size: 1.08em
+    }
+
+    .texerr {
+      font-family: Consolas, monospace;
+      color: var(--dg)
+    }
+
+    .md .sheet {
+      overflow: auto;
+      max-height: 72vh;
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      margin-bottom: 14px
+    }
+
+    .md .sheet table {
+      display: table;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 0;
+      font-size: 13px;
+      width: max-content;
+      min-width: 100%
+    }
+
+    .md .sheet th,
+    .md .sheet td {
+      border: 0;
+      border-right: 1px solid var(--bd);
+      border-bottom: 1px solid var(--bd);
+      padding: 4px 10px;
+      white-space: nowrap;
+      text-align: left
+    }
+
+    .md .sheet thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #26262e;
+      color: var(--mu);
+      font-size: 11px;
+      text-align: center
+    }
+
+    .md .sheet tbody th {
+      position: sticky;
+      left: 0;
+      background: #26262e;
+      color: var(--mu);
+      font-size: 11px;
+      text-align: center
+    }
+
+    .md .sheet td.n {
+      text-align: right;
+      font-variant-numeric: tabular-nums
+    }
+
+    .md .sheet td.er {
+      color: #f87171
+    }
+
+    .md .sheet tr.hd td {
+      background: var(--card);
+      font-weight: 700;
+      color: #fff
+    }
+    .dom.art{color:#c084fc}.item.on.art{background:rgba(192,132,252,.15);box-shadow:inset 3px 0 #c084fc}.card.art{border-top-color:#c084fc}
+    .brand:focus-visible{outline:1px solid var(--ac);outline-offset:-2px}
+  </style>
+</head>
+
+<body>
+  <aside>
+    <div class="brand" id="brand" tabindex="0" title="Home · press F2 to rename the project"><b id="bn">Documentation</b><small>Design · Art · Scripting</small></div>
+    <div class="sw">
+      <input id="q" type="search" placeholder="Search docs (press /)" autocomplete="off">
+      <div class="st"><span id="count">Loading…</span><a id="tgl">Expand/Collapse</a></div>
+    </div>
+    <div id="tree"></div>
+    <div class="foot"><button id="add" class="pri">➕ Add docs</button>
+      <div class="mw"><button id="mbtn" title="Refresh, reorganize, help">☰ ▴</button>
+        <div id="menu" hidden><button data-a="refresh">↻ Refresh</button><button data-a="reorg">⇅
+            Reorganize</button><button data-a="ide">💻 Editor settings</button><button data-a="help">❓ Help</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <main>
+    <div id="view"></div>
+  </main>
+  <div id="modal" hidden></div>
+  <div id="toast" hidden></div>
+  <input type="file" id="pick" accept=".md,.markdown" multiple hidden>
+
+  <script>
+    /* ============================================================
+       Docs portal — layout on disk (this file lives at the docs root):
+         _manifest.json   mode + file list (folders) or tree (single folder)
+         Design/ Scripting/   <- "folders" mode: directories ARE the hierarchy
+         pages/               <- "single folder" mode: flat folder, hierarchy lives in the manifest
+       Pages are fetched lazily, rendered at runtime, never baked into this HTML.
+       ============================================================ */
+    const $ = s => document.querySelector(s);
+    const DOM = ['design', 'art', 'scripting'], DT = { design: 'Design', art: 'Art', scripting: 'Scripting' }, IC = { design: '🎨', art: '🖌️', scripting: '💻' };
+    const mkT = () => Object.fromEntries(DOM.map(d => [d, []])), allN = T => DOM.flatMap(d => T[d]);
+    const S = { name: '', mode: null, files: [], tree: null, T: null, root: null, pending: null, cache: new Map(), ip: null, cur: null, open: new Set(), all: false, tk: 0, drag: null };
+    const KEY = 'root:' + location.pathname;
+    const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const nat = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+    const clean = s => s.replace(/^\d+[\s._-]+/, '');
+    const lab = s => clean(s.replace(/_+/g, ' '));
+    const pretty = f => lab(f.replace(/\.[^.]+$/, '').replace(/-+/g, ' ')).trim() || f;
+    const L = n => S.mode === 'singleFolder' && n.file ? n.name : pretty(n.name);
+    const srt = l => S.mode === 'singleFolder' ? l : [...l].sort((a, b) => nat(a.name, b.name));
+    const cnt = l => l.reduce((a, n) => a + (n.file ? 1 : 0) + cnt(n.children), 0);
+    const rx = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 3500) };
+
+    /* ---------- persistence of the folder handle ---------- */
+    const idb = (m, k, v) => new Promise((ok, no) => {
+      const o = indexedDB.open('docs-portal', 1); o.onupgradeneeded = () => o.result.createObjectStore('h'); o.onerror = () => no(o.error);
+      o.onsuccess = () => { const s = o.result.transaction('h', m === 'get' ? 'readonly' : 'readwrite').objectStore('h'); const r = m === 'get' ? s.get(k) : s.put(v, k); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error) }
+    });
+
+    /* ---------- file access (File System Access API when connected, fetch otherwise) ---------- */
+    const dirAt = async (s, c) => { let d = S.root; for (const x of s) d = await d.getDirectoryHandle(x, { create: !!c }); return d };
+    const fh = async (p, c) => { const s = p.split('/'), f = s.pop(); return (await dirAt(s, c)).getFileHandle(f, { create: !!c }) };
+    async function read(p, fresh) {
+      if (!fresh && S.cache.has(p)) return S.cache.get(p);
+      let t;
+      if (S.root) t = await (await (await fh(p)).getFile()).text();
+      else { if (location.protocol === 'file:') throw 0; const r = await fetch(encodeURI(p), { cache: 'no-cache' }); if (!r.ok) throw 0; t = await r.text() }
+      if (!fresh) S.cache.set(p, t); return t
+    }
+    async function write(p, data) { const w = await (await fh(p, 1)).createWritable(); await w.write(data); await w.close() }
+    async function walk(d, pre, out, all) {
+      for await (const [n, h] of d.entries()) {
+        if (h.kind === 'directory') { if (!/^\.|~$/.test(n)) await walk(h, pre + n + '/', out, all) }
+        else if (all || /\.(md|markdown)$/i.test(n)) out.push(pre + n)
+      }
+      return out
+    }
+    async function scan() { const o = []; for (const d of DOM) { try { await walk(await dirAt([DT[d]]), DT[d] + '/', o) } catch { } } S.files = o.sort(nat) }
+    async function save() {
+      const m = S.mode === 'singleFolder' ? { version: 1, name: S.name, mode: 'singleFolder', tree: Object.fromEntries(DOM.map(d => [d, strip(S.tree[d])])) } : { version: 1, name: S.name, mode: 'folders', files: [...S.files].sort(nat) };
+      await write('_manifest.json', JSON.stringify(m, null, 2) + '\n')
+    }
+    async function uniq(d, n) {
+      const e = n.match(/\.[^.]+$/)?.[0] || '', b = n.slice(0, n.length - e.length); let i = 1, p;
+      for (; ;) { p = [...d, i > 1 ? `${b}_${i}${e}` : n].join('/'); try { await fh(p); i++ } catch { return p } }
+    }
+
+    /* ---------- connect / load ---------- */
+    async function ensureWrite() {
+      if (S.root) return true;
+      try {
+        let h = S.pending;
+        if (!(h && await h.requestPermission({ mode: 'readwrite' }) === 'granted')) {
+          if (!window.showDirectoryPicker) { toast('Editing docs needs Chrome or Edge'); return false }
+          h = await showDirectoryPicker({ mode: 'readwrite', id: 'docs-root' });
+          try { await idb('put', KEY, h) } catch { }
+        }
+        S.root = h; await load(); return true
+      } catch { return false }
+    }
+
+    const norm = l => (l || []).map(n => ({ name: n.name, file: n.file, children: norm(n.children) }));
+    const strip = l => l.map(n => { const c = n.children || [], o = { name: n.name, file: n.file }; if (c.length) o.children = strip(c); return o });
+    const nk = n => n.key || n.file;
+    async function load() {
+      S.cache.clear(); S.ip = null;
+      let m; try { m = JSON.parse(await read('_manifest.json', 1)) } catch { }
+      if (!m) return S.root ? setup() : connect();
+      if (m.mode === 'manual' || m.mode === 'single folder') m.mode = 'singleFolder'; // older manifests
+      S.mode = m.mode; S.name = m.name || '';
+      if (m.mode === 'singleFolder') S.tree = Object.fromEntries(DOM.map(d => [d, norm(m.tree?.[d])]));
+      else { S.files = m.files || []; if (S.root) { const o = JSON.stringify(S.files); await scan(); if (JSON.stringify(S.files) !== o) await save() } }
+      build(); renderTree(); route();
+      if (!S.name && S.root) nameDialog(true) // manifests created before project names existed
+    }
+
+    /* Every doc is a page node {name,file,children}. Folders mode derives the tree from paths:
+       Design/Combat.md  ->  its children live in  Design/Combat/*.md  (siblings share a folder). */
+    function build() {
+      if (S.mode === 'singleFolder') { S.T = S.tree; return }
+      const T = mkT(), M = new Map(), sk = f => f.replace(/\.[^./]+$/, '');
+      const attach = (n, s) => { if (s.length <= 2) { const l = T[s[0].toLowerCase()]; l && l.push(n) } else get(s.slice(0, -1).join('/')).children.push(n) };
+      const get = k => { let n = M.get(k); if (n) return n; const s = k.split('/'); n = { name: s.at(-1), key: k, children: [] }; M.set(k, n); attach(n, s); return n };
+      for (const f of S.files) M.set(sk(f), { name: f.split('/').at(-1), file: f, key: sk(f), children: [] });
+      for (const [k, n] of [...M]) attach(n, k.split('/'));
+      S.T = T
+    }
+
+    function connect() {
+      S.T = null; $('#tree').innerHTML = ''; $('#count').textContent = 'Not connected';
+      $('#view').innerHTML = `<div class="hero"><h1>Connect your docs folder</h1>
+    <p class="lead">Pick the folder that contains this file. The browser remembers it, so this is a one-time step per machine (you may be asked to re-allow access after a restart).</p>
+    <button class="btn pri big" id="conn">${S.pending ? 'Reconnect folder' : 'Connect docs folder'}</button>
+    ${window.showDirectoryPicker ? '' : '<p class="hint">This browser cannot open folders. Use Chrome/Edge, or serve this folder over HTTP (e.g. <code>python -m http.server</code>) for read-only browsing.</p>'}</div>`;
+      $('#conn').onclick = async () => { if (!await ensureWrite()) toast('Could not connect to the folder') }
+    }
+
+    function setup() {
+      modal('Set up this docs folder', `<label>Project name<input id="pn" placeholder="e.g. My Game"></label>
+    <p class="hint">Shown in the sidebar and browser tab, and stored in <code>_manifest.json</code> so the whole team sees it. You can change it later: click the name and press <kbd>F2</kbd>.</p>
+    <p class="hint">Now choose where the files live. This is fixed once created (delete <code>_manifest.json</code> to start over). In both modes a page can have child pages.</p>
+    <label class="opt"><input type="radio" name="m" value="folders" checked><span><b>Folders</b> — children live in a folder named after their parent (<code>Combat.md</code> → <code>Combat/Melee.md</code>); siblings share a folder and are sorted alphabetically.</span></label>
+    <label class="opt"><input type="radio" name="m" value="singleFolder"><span><b>Single folder</b> — every file lives in one <code>pages/</code> folder; the hierarchy and order are stored in the manifest.</span></label>`,
+        'Create', async r => {
+          S.name = r.querySelector('#pn').value.trim(); if (!S.name) throw new Error('Enter the project name');
+          S.mode = r.querySelector('input[name=m]:checked').value;
+          if (S.mode === 'folders') { S.files = []; for (const d of DOM) await write(DT[d] + '/.gitkeep', '') }
+          else { S.tree = mkT(); await write('pages/.gitkeep', '') }
+          await save(); build(); renderTree(); home()
+        }, { nc: 1 });
+      setTimeout(() => $('#pn')?.focus())
+    }
+
+    const setBrand = () => { $('#bn').textContent = S.name || 'Documentation'; document.title = S.name ? S.name + ' Docs' : 'Documentation' };
+    function nameDialog(first) {
+      modal(first ? 'Name this project' : 'Rename project', `<label>Project name<input id="pn" value="${esc(S.name)}" placeholder="e.g. My Game"></label><p class="hint">Shown in the sidebar and browser tab. It is stored in <code>_manifest.json</code>, so the whole team sees it.</p>`, 'Save', async r => {
+        const v = r.querySelector('#pn').value.trim();
+        if (!v) throw new Error('Enter a name');
+        if (!await ensureWrite()) throw new Error('Docs folder is not connected');
+        S.name = v; await save(); renderTree(); if (!S.cur) home()
+      }, first ? { nc: 1 } : {});
+      const i = $('#pn'); i.focus(); i.select(); i.onkeydown = e => { if (e.key === 'Enter') $('#modal [data-ok]').click() }
+    }
+
+    /* ---------- tree ---------- */
+    function nodes(l, d) {
+      return srt(l).map(n => {
+        const t = esc(L(n)), it = n.file ? `<button class="item ${d}" data-open="${esc(n.file)}">📄 ${t}</button>` : `<span class="item v">📁 ${t}</span>`;
+        return n.children.length ? `<details class="fold" data-k="${esc(nk(n))}"${S.open.has(nk(n)) ? ' open' : ''}><summary><i>▶</i>${it}<em>${cnt(n.children)}</em></summary><div class="kids">${nodes(n.children, d)}</div></details>` : it
+      }).join('')
+    }
+    function renderTree() {
+      setBrand();
+      $('#tree').innerHTML = DOM.map(d => `<div class="dom ${d}">${IC[d]} ${DT[d]}<em>${cnt(S.T[d])}</em></div>${S.T[d].length ? nodes(S.T[d], d) : '<p class="none">Empty</p>'}`).join('');
+      $('#count').textContent = `${pages().length} pages`; mark()
+    }
+    const mark = () => document.querySelectorAll('.item[data-open]').forEach(b => b.classList.toggle('on', b.dataset.open === S.cur));
+    function pages() { const o = [], w = (l, c) => srt(l).forEach(n => { if (n.file) o.push({ file: n.file, title: L(n), crumb: c.join(' › ') }); w(n.children, [...c, L(n)]) }); DOM.forEach(d => w(S.T[d], [DT[d]])); return o }
+    function chain(file) { let r = []; const w = (l, a) => { for (const n of l) { if (n.file === file) r = a; w(n.children, [...a, nk(n)]) } }; DOM.forEach(d => w(S.T[d], [])); return r }
+    function reveal(k) {
+      document.querySelectorAll('details.fold').forEach(d => { const x = d.dataset.k; if (k === x || k.startsWith(x + '/')) d.open = true });
+      document.querySelector(`details.fold[data-k="${CSS.escape(k)}"]`)?.scrollIntoView({ block: 'nearest' })
+    }
+    const lc = (l, p) => { for (let i = 0; i < l.length; i++) { if (p(l[i])) return { l, i, n: l[i] }; const r = lc(l[i].children, p); if (r) return r } };
+    const loc = (T, p) => { for (const d of DOM) { const r = lc(T[d], p); if (r) return r } };
+
+    function home() {
+      S.cur = null; mark(); try { if (location.hash) history.replaceState(null, '', location.pathname + location.search) } catch { }
+      const total = pages().length;
+      $('#view').innerHTML = `<div class="hero"><h1>${S.name ? esc(S.name) + ' ' : ''}Documentation</h1><p class="lead">${total ? 'Pick a section below or browse the tree on the left. Open <b>☰ → Help</b> for a quick guide.' : 'Nothing here yet — click <b>➕ Add docs</b> to add your first <code>.md</code> file.'}</p></div>
+  <div class="cards">${DOM.map(d => `<div class="card ${d}"><h2>${IC[d]} ${DT[d]}</h2><p>${cnt(S.T[d])} pages</p><ul>${srt(S.T[d]).slice(0, 8).map(n => n.file ? `<li><button data-open="${esc(n.file)}">📄 ${esc(L(n))}</button></li>` : `<li><button data-reveal="${esc(nk(n))}">📁 ${esc(L(n))}</button></li>`).join('')}</ul></div>`).join('')}</div>`;
+      $('main').scrollTop = 0
+    }
+
+    async function openPage(file, fromHash) {
+      S.cur = file; const tk = ++S.tk;
+      const ch = chain(file); document.querySelectorAll('details.fold').forEach(d => { if (ch.includes(d.dataset.k)) d.open = true });
+      if (!fromHash) location.hash = '#' + encodeURIComponent(file);
+      $('#q').value = ''; mark(); document.querySelector('.item.on')?.scrollIntoView({ block: 'nearest' });
+      let t;
+      try { t = await read(file) } catch { if (tk === S.tk) $('#view').innerHTML = `<p>Could not load <code>${esc(file)}</code>.</p>`; return }
+      if (tk !== S.tk) return;
+      const p = pages().find(x => x.file === file);
+      $('#view').innerHTML = `<div class="crumb">${esc(p?.crumb || '')}</div><article class="md">${md(t)}</article>`;
+      fixImgs(file); renderMath(); $('main').scrollTop = 0
+    }
+
+    function route() {
+      const f = decodeURIComponent(location.hash.slice(1));
+      f && pages().some(p => p.file === f) ? openPage(f, 1) : home()
+    }
+
+    /* ---------- markdown renderer: sanitized HTML, LaTeX ($..$ / $$..$$), sheet blocks with formulas ---------- */
+    let MI = [];
+    const OKT = new Set('div p table thead tbody tfoot tr th td caption colgroup col details summary ul ol li dl dt dd pre blockquote hr br h1 h2 h3 h4 h5 h6 center section figure figcaption img span a b i em strong u s del ins kbd sub sup mark small code'.split(' '));
+    const OKA = new Set('href src alt title width height align valign colspan rowspan open style'.split(' '));
+    // whitelist sanitizer: unknown tags are shown as text, unknown attributes dropped, no scripts / javascript: / url() styles
+    function cleanTag(m) {
+      const t = m.match(/^<(\/?)([a-z][a-z0-9]*)([\s\S]*?)\/?>$/i);
+      if (!t || !OKT.has(t[2].toLowerCase())) return null;
+      const n = t[2].toLowerCase(); if (t[1]) return `</${n}>`;
+      let a = '';
+      for (const [, k, v] of t[3].matchAll(/([a-z-]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+))?/gi)) {
+        const key = k.toLowerCase(); if (!OKA.has(key)) continue;
+        const val = v === undefined ? '' : v.replace(/^["']|["']$/g, ''), cv = val.replace(/[\s\u0000-\u001f]/g, '');
+        if (key === 'open') { a += ' open'; continue }
+        if (key === 'style') { if (/url\(|expression|@import|javascript:/i.test(cv)) continue }
+        else if (key === 'href' || key === 'src') {
+          if (/^(javascript|vbscript|data:(?!image\/))/i.test(cv)) continue;
+          if (key === 'src' && !/^(https?:|data:)/i.test(cv)) { a += ` data-src="${esc(val)}"`; continue }
+          if (key === 'href' && /^https?:/i.test(cv)) { a += ` href="${esc(val)}" target="_blank" rel="noopener"`; continue }
+        }
+        a += ` ${key}="${esc(val)}"`
+      }
+      return `<${n}${a}>`
+    }
+    const cleanBlock = h => h.replace(/<!--[\s\S]*?-->/g,'').replace(/<\/?[a-z][^>]*>/gi,m=>cleanTag(m)??esc(m));
+
+      function inl(s) {
+        s = s.replace(/<!--[\s\S]*?-->/g,'').replace(/<\/?[a-z][^>]*>/gi,m=>{const c=cleanTag(m);if(!c)return m;MI.push(c);return `\u0002${MI.length-1}\u0002`});
+  return esc(s)
+          .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img alt="$1" data-src="$2">')
+          .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, a, u) => `<a href="${u}"${/^https?:/.test(u) ? ' target="_blank" rel="noopener"' : ''}>${a}</a>`)
+          .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|\W)\*([^*\s][^*]*)\*/g, '$1<i>$2</i>')
+          .replace(/\u0001/g, () => '$').replace(/\u0002(\d+)\u0002/g, (_, n) => MI[n])
+      }
+
+const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center|dl|hr|h[1-6])(?=[\s>\/])/i;
+    function md(src) {
+      MI = []; const code = [], keep = h => (code.push(h), `\u0000${code.length - 1}\u0000`), mi = h => (MI.push(h), `\u0002${MI.length - 1}\u0002`);
+      src = src.replace(/\r/g, '').replace(/^---\n[\s\S]*?\n---\n/, '')
+        .replace(/```([\w-]*)([^\n]*)\n([\s\S]*?)```/g, (_, l, o, c) => keep(l === 'sheet' ? sheet(c, /header/i.test(o)) : `<pre><button class="copy" data-copy>Copy</button><code>${esc(c.replace(/\n$/, ''))}</code></pre>`))
+        .replace(/`([^`\n]+)`/g, (_, c) => mi(`<code>${esc(c)}</code>`))
+        .replace(/\\\$/g, '\u0001')
+        .replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => `\n${keep(`<div class="tex" data-d="1">${esc(t.trim())}</div>`)}\n`)
+        .replace(/\$(?!\s)((?:\\.|[^$\\\n])+?)(?<!\s)\$(?!\d)/g, (_, t) => mi(`<span class="tex">${esc(t)}</span>`));
+      const rs = s => s.replace(/\u0000(\d+)\u0000/g, (_, n) => code[n]).replace(/\u0002(\d+)\u0002/g, (_, n) => MI[n]).replace(/\u0001/g, () => '$');
+      const out = [], X = src.split('\n'), LI = /^\s*([-*+]|\d+\.)\s/; let i = 0, m;
+      while (i < X.length) {
+        const l = X[i];
+        if (!l.trim()) { i++; continue }
+        if (m = l.match(/^\u0000(\d+)\u0000$/)) { out.push(code[m[1]]); i++ }
+        else if (m = l.match(/^(#{1,6})\s+(.*)/)) { out.push(`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`); i++ }
+        else if (/^(-{3,}|\*{3,}|_{3,})$/.test(l.trim())) { out.push('<hr>'); i++ }
+        else if (l[0] === '>') { const b = []; while (i < X.length && X[i][0] === '>') b.push(X[i++].replace(/^>\s?/, '')); out.push(`<blockquote>${inl(b.join(' '))}</blockquote>`) }
+        else if (m = l.match(HB)) {
+          const tg = m[1].toLowerCase(), o = new RegExp('<' + tg + '(?=[\\s>/])', 'gi'), c = new RegExp('</' + tg + '\\s*>', 'gi'), b = []; let d = 0;
+          do { const t = X[i++]; b.push(t); d += (t.match(o) || []).length - (t.match(c) || []).length } while (i < X.length && d > 0 && tg !== 'hr' && !(tg === 'p' && !X[i].trim()));
+          out.push(rs(cleanBlock(b.join('\n'))))
+        }
+        else if (LI.test(l)) { const o = /^\s*\d+\./.test(l), t = o ? 'ol' : 'ul', it = []; while (i < X.length && LI.test(X[i])) it.push(`<li>${inl(X[i++].replace(/^\s*([-*+]|\d+\.)\s(\[[ xX]\]\s)?/, ''))}</li>`); out.push(`<${t}>${it.join('')}</${t}>`) }
+        else if (l.includes('|') && /^[\s|:-]+$/.test(X[i + 1] || '') && (X[i + 1] || '').includes('-')) {
+          const row = s => s.trim().replace(/^\||\|$/g, '').split('|').map(c => inl(c.trim()));
+          const h = row(l), b = []; i += 2; while (i < X.length && X[i].includes('|')) b.push(row(X[i++]));
+          out.push(`<table><thead><tr>${h.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${b.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`)
+        }
+        else { const p = []; do p.push(X[i++]); while (i < X.length && X[i].trim() && !/^(#{1,6}\s|>|\u0000\d+\u0000$)/.test(X[i]) && !LI.test(X[i])); out.push(`<p>${inl(p.join(' '))}</p>`) }
+      }
+      return out.join('\n')
+    }
+
+    /* ---------- sheets: a fenced block tagged "sheet" (tab, | or comma separated) with =formulas ---------- */
+    const num = v => { if (typeof v === 'string' && v[0] === '#') throw v; if (Array.isArray(v)) throw '#VALUE!'; if (v === '' || v == null) return 0; if (typeof v === 'boolean') return +v; const n = +v; if (isNaN(n)) throw '#VALUE!'; return n };
+    const colName = n => { let s = ''; for (n++; n > 0; n = (n - 1) / 26 | 0)s = String.fromCharCode(65 + (n - 1) % 26) + s; return s };
+    const colIdx = s => [...s].reduce((a, c) => a * 26 + c.charCodeAt(0) - 64, 0) - 1;
+    const fmtN = v => Number.isFinite(v) ? v.toLocaleString('en-US', { maximumFractionDigits: 4 }) : '#NUM!';
+    function fcall(f, a) {
+      if (f !== 'IF') { const x = a.flat().find(v => v && v.e); if (x) throw x.e }
+      const ns = a.flat().filter(x => typeof x === 'number'), n = i => num(a[i]);
+      switch (f) {
+        case 'SUM': return ns.reduce((s, x) => s + x, 0);
+        case 'AVERAGE': case 'AVG': if (!ns.length) throw '#DIV/0!'; return ns.reduce((s, x) => s + x, 0) / ns.length;
+        case 'MIN': return ns.length ? Math.min(...ns) : 0; case 'MAX': return ns.length ? Math.max(...ns) : 0;
+        case 'COUNT': return ns.length; case 'PRODUCT': return ns.reduce((s, x) => s * x, 1);
+        case 'ROUND': { const d = 10 ** (a[1] === undefined ? 0 : n(1)); return Math.round(n(0) * d) / d }
+        case 'FLOOR': case 'INT': return Math.floor(n(0)); case 'CEIL': case 'CEILING': return Math.ceil(n(0));
+        case 'ABS': return Math.abs(n(0)); case 'SQRT': if (n(0) < 0) throw '#NUM!'; return Math.sqrt(n(0));
+        case 'POW': case 'POWER': return Math.pow(n(0), n(1)); case 'MOD': if (n(1) === 0) throw '#DIV/0!'; return n(0) - n(1) * Math.floor(n(0) / n(1));
+        case 'LN': return Math.log(n(0)); case 'LOG': return a[1] === undefined ? Math.log10(n(0)) : Math.log(n(0)) / Math.log(n(1)); case 'EXP': return Math.exp(n(0));
+        case 'AND': return a.every(x => x === true || num(x) !== 0); case 'OR': return a.some(x => x === true || (x !== false && num(x) !== 0)); case 'NOT': return !(a[0] === true || (a[0] !== false && num(a[0]) !== 0));
+        case 'IF': { const c = a[0]; if (c && c.e) throw c.e; const p = (typeof c === 'boolean' ? c : num(c) !== 0) ? a[1] : a[2]; if (p && p.e) throw p.e; return p === undefined ? false : p }
+      }
+      throw '#NAME?'
+    }
+    function F(src, cell) {
+      const T = [], re = /\s*(?:((?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)|([a-z][a-z0-9.]*)(?=\()|(\$?[a-z]{1,3}\$?\d+(?::\$?[a-z]{1,3}\$?\d+)?)|"((?:[^"]|"")*)"|(<=|>=|<>|[-+*\/^%(),=<>&]))/iy;
+      let pos = 0, m;
+      for (; ;) {
+        re.lastIndex = pos; m = re.exec(src); if (!m) break; pos = re.lastIndex;
+        if (m[1] !== undefined) T.push({ n: parseFloat(m[1]) }); else if (m[2]) T.push({ f: m[2].toUpperCase() }); else if (m[3]) T.push({ r: m[3] }); else if (m[4] !== undefined) T.push({ s: m[4].replace(/""/g, '"') }); else T.push({ o: m[5] })
+      }
+      if (src.slice(pos).trim()) throw '#ERR!';
+      let k = 0; const is = o => T[k] && T[k].o === o;
+      const ref = s => {
+        const q = s.replace(/\$/g, '').toUpperCase().split(':').map(x => { const g = x.match(/^([A-Z]+)(\d+)$/); return [+g[2] - 1, colIdx(g[1])] });
+        if (q.length === 1) return cell(q[0][0], q[0][1]);
+        const o = []; for (let r = Math.min(q[0][0], q[1][0]); r <= Math.max(q[0][0], q[1][0]); r++)for (let c = Math.min(q[0][1], q[1][1]); c <= Math.max(q[0][1], q[1][1]); c++)o.push(cell(r, c)); return o
+      };
+      const pr = () => {
+        const t = T[k++]; if (!t) throw '#ERR!';
+        if (t.n !== undefined) return t.n; if (t.s !== undefined) return t.s; if (t.r) return ref(t.r);
+        if (t.f) {
+          if (!is('(')) throw '#ERR!'; k++; const a = [];
+          if (is(')')) k++; else for (; ;) { try { a.push(cmp()) } catch (e) { if (typeof e !== 'string') throw e; a.push({ e }) } if (is(',')) { k++; continue } if (!is(')')) throw '#ERR!'; k++; break }
+          return fcall(t.f, a)
+        }
+        if (t.o === '(') { const v = cmp(); if (!is(')')) throw '#ERR!'; k++; return v }
+        throw '#ERR!'
+      };
+      const pc = () => { let a = pr(); while (is('%')) { k++; a = num(a) / 100 } return a };
+      const un = () => { if (is('-')) { k++; return -num(un()) } if (is('+')) { k++; return un() } return pc() };
+      const pw = () => { let a = un(); while (is('^')) { k++; a = Math.pow(num(a), num(un())) } return a };
+      const mul = () => { let a = pw(); while (is('*') || is('/')) { const o = T[k++].o, b = pw(); if (o === '/' && num(b) === 0) throw '#DIV/0!'; a = o === '*' ? num(a) * num(b) : num(a) / num(b) } return a };
+      const add = () => { let a = mul(); while (is('+') || is('-')) { const o = T[k++].o, b = mul(); a = o === '+' ? num(a) + num(b) : num(a) - num(b) } return a };
+      const cat = () => { let a = add(); while (is('&')) { k++; a = '' + a + add() } return a };
+      const cmp = () => { let a = cat(); while (T[k] && ['=', '<>', '<', '>', '<=', '>='].includes(T[k].o)) { const o = T[k++].o, b = cat(); a = o === '=' ? a == b : o === '<>' ? a != b : o === '<' ? a < b : o === '>' ? a > b : o === '<=' ? a <= b : a >= b } return a };
+      const v = cmp(); if (k < T.length) throw '#ERR!'; if (Array.isArray(v)) throw '#VALUE!'; return v
+    }
+
+    function sheet(txt, hd) {
+      const lines = txt.replace(/\r/g, '').replace(/\s+$/, '').split('\n');
+      const dl = lines.some(l => l.includes('\t')) ? '\t' : lines.some(l => l.includes('|')) ? '|' : ',';
+      const sp = l => {
+        if (dl === '|') l = l.trim().replace(/^\||\|$/g, ''); const o = []; let c = '', q = 0, d = 0;
+        for (const ch of l) { if (ch === '"') q = !q; else if (!q && ch === '(') d++; else if (!q && ch === ')') d--; if (ch === dl && !q && d <= 0) { o.push(c); c = '' } else c += ch }
+        o.push(c); return o.map(x => x.trim().replace(/^"(.*)"$/, '$1'))
+      };
+      const R = lines.filter(l => !(dl === '|' && /^[\s|:-]+$/.test(l) && l.includes('-'))).map(sp), W = Math.max(1, ...R.map(r => r.length)), memo = {}, busy = {};
+      const cell = (r, c) => {
+        const k = r + ',' + c; if (k in memo) return memo[k]; if (busy[k]) throw '#CYCLE!'; busy[k] = 1;
+        const raw = (R[r] && R[r][c]) ?? ''; let v;
+        try { v = raw[0] === '=' ? F(raw.slice(1), cell) : /^-?\d+(\.\d+)?(e[+-]?\d+)?%?$/i.test(raw) ? (raw.endsWith('%') ? parseFloat(raw) / 100 : parseFloat(raw)) : raw }
+        catch (e) { v = typeof e === 'string' ? e : '#ERR!' }
+        busy[k] = 0; return memo[k] = v
+      };
+      let h = `<div class="sheet"><table><thead><tr><th></th>${Array.from({ length: W }, (_, c) => `<th>${colName(c)}</th>`).join('')}</tr></thead><tbody>`;
+      R.forEach((row, r) => {
+        h += `<tr${hd && !r ? ' class="hd"' : ''}><th>${r + 1}</th>`;
+        for (let c = 0; c < W; c++) {
+          const raw = row[c] ?? '', v = cell(r, c), f = raw[0] === '=', er = f && typeof v === 'string' && v[0] === '#';
+          const t = typeof v === 'number' ? (f ? fmtN(v) : raw) : typeof v === 'boolean' ? (v ? 'TRUE' : 'FALSE') : v;
+          h += `<td class="${typeof v === 'number' ? 'n' : ''}${er ? ' er' : ''}"${f ? ` title="${esc(raw)}"` : ''}>${esc(t)}</td>`
+        }
+        h += '</tr>'
+      });
+      return h + '</tbody></table></div>'
+    }
+
+    /* ---------- LaTeX: KaTeX is loaded lazily, only for pages that contain math (local copy in _vendor/katex/ wins over the CDN) ---------- */
+    let kx;
+    function loadKatex() {
+      return kx ??= new Promise((ok, no) => {
+        const bases = ['_vendor/katex/', 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/'];
+        const go = i => {
+          if (i >= bases.length) return no();
+          const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = bases[i] + 'katex.min.css'; document.head.append(l);
+          const s = document.createElement('script'); s.src = bases[i] + 'katex.min.js';
+          s.onload = () => ok(window.katex); s.onerror = () => { l.remove(); s.remove(); go(i + 1) }; document.head.append(s)
+        };
+        go(0)
+      })
+    }
+    async function renderMath() {
+      const els = document.querySelectorAll('#view .tex'); if (!els.length) return;
+      let k; try { k = await loadKatex() } catch { kx = null; els.forEach(e => e.classList.add('texerr')); toast('KaTeX could not be loaded (offline?) — showing the LaTeX source'); return }
+      els.forEach(e => { if (e.dataset.done) return; e.dataset.done = 1; try { k.render(e.textContent, e, { displayMode: e.dataset.d === '1', throwOnError: false }) } catch { } })
+    }
+    const resolve = (from, rel) => { const b = from.split('/').slice(0, -1); for (const s of rel.split('/')) { if (s === '..') b.pop(); else if (s && s !== '.') b.push(s) } return b.join('/') };
+    function fixImgs(file) {
+      document.querySelectorAll('#view img[data-src]').forEach(async im => {
+        const u = im.dataset.src; if (/^(https?:|data:)/.test(u)) { im.src = u; return }
+        const p = resolve(file, decodeURI(u));
+        try { if (S.root) im.src = URL.createObjectURL(await (await fh(p)).getFile()); else im.src = encodeURI(p) } catch { im.alt += ' (missing)' }
+      })
+    }
+
+    /* ---------- lazy search: index is built on first use, then cached ---------- */
+    function ensureIdx() {
+      return S.ip ??= (async () => {
+        const ps = pages(), out = [], q = [...ps]; let n = 0;
+        await Promise.all(Array.from({ length: 6 }, async () => {
+          for (let p; p = q.shift();) {
+            try { const t = await read(p.file); out.push({ ...p, t, l: t.toLowerCase(), tl: p.title.toLowerCase() }) } catch { }
+            $('#count').textContent = `Indexing ${++n}/${ps.length}…`
+          }
+        }));
+        $('#count').textContent = `${ps.length} pages`; return out
+      })()
+    }
+    async function search(q) {
+      q = q.trim().toLowerCase();
+      if (!q) { S.cur ? openPage(S.cur, 1) : home(); return }
+      if (!S.T) return;
+      const w = q.split(/\s+/), idx = await ensureIdx();
+      if ($('#q').value.trim().toLowerCase() !== q) return;
+      const re = new RegExp('(' + w.map(rx).join('|') + ')', 'gi');
+      const hits = idx.filter(p => w.every(x => p.l.includes(x) || p.tl.includes(x)))
+        .map(p => ({ p, s: w.reduce((a, x) => a + (p.tl.includes(x) ? 10 : 1), 0) })).sort((a, b) => b.s - a.s).slice(0, 40);
+      S.tk++;
+      $('#view').innerHTML = `<div class="crumb">Search</div><h1 style="font-size:24px;margin-bottom:16px">${hits.length} result${hits.length === 1 ? '' : 's'} for “${esc(q)}”</h1>` +
+        hits.map(({ p }) => {
+          const i = p.l.indexOf(w[0]), s = (i < 0 ? p.t.slice(0, 170) : p.t.slice(Math.max(0, i - 50), i + 140)).replace(/\s+/g, ' ');
+          return `<div class="hit" data-open="${esc(p.file)}"><small>${esc(p.crumb)}</small><b>${esc(p.title)}</b><div>…${esc(s).replace(re, '<mark>$1</mark>')}…</div></div>`
+        }).join('') || '<p class="lead">No matching docs.</p>'
+    }
+
+    /* ---------- modal ---------- */
+    function modal(t, b, ok, fn, o = {}) {
+      const m = $('#modal');
+      m.innerHTML = `<div class="mb"><div class="mc${o.wide ? ' wide' : ''}"><h3>${t}</h3>${b}<div class="ma">${o.nc || o.one ? '' : '<button data-x>Cancel</button>'}<button class="pri" data-ok>${ok}</button></div></div></div>`;
+      m.hidden = false; m.dataset.nc = o.nc ? '1' : '';
+      m.onclick = async e => {
+        if (e.target.closest('[data-x]') || (e.target.className === 'mb' && !o.nc)) m.hidden = true;
+        else if (e.target.closest('[data-ok]')) {
+          const bt = e.target.closest('button'); bt.disabled = true;
+          try { if (await fn(m) !== false) m.hidden = true } catch (x) { toast(x.message || 'Something went wrong') }
+          bt.disabled = false
+        }
+      }
+    }
+
+    /* ---------- working tree + arrange GUI (drag a page onto another: middle = child, top/bottom edge = sibling) ---------- */
+    let uid = 0;
+    const cl = l => l.map(n => ({ ...n, id: ++uid, children: cl(n.children) }));
+    const cloneT = T => Object.fromEntries(DOM.map(d => [d, cl(T[d])]));
+    const flat = l => l.flatMap(n => [n, ...flat(n.children)]);
+    const inside = (n, id) => n.id === id || n.children.some(c => inside(c, id));
+    const sig = W => JSON.stringify(DOM.map(d => (function f(l) { return l.map(n => [n.id, f(n.children)]) })(W[d])));
+    const zone = (e, r) => { const b = r.getBoundingClientRect(), y = (e.clientY - b.top) / b.height; return y < .28 ? 'zb' : y > .72 ? 'za' : 'zc' };
+
+    function arrange(title, hint, W, mv, okLabel, done) {
+      const html = l => l.map(n => `<div class="ar${n._new ? ' nw' : ''}${mv(n) ? '' : ' lk'}" data-id="${n.id}" draggable="${!!mv(n)}">${mv(n) ? '⠿' : '·'} ${esc(L(n))}</div>${n.children.length ? `<div class="ak">${html(n.children)}</div>` : ''}`).join('');
+      modal(title, `<p class="hint">${hint}</p><div id="arr"></div>`, okLabel, () => done(W), { wide: 1 });
+      const box = $('#arr'); let drag = null;
+      const paint = () => box.innerHTML = DOM.map(d => `<div class="ah" data-sec="${d}">${IC[d]} ${DT[d]} — drop here for top level</div>${html(W[d])}`).join('');
+      const clr = () => box.querySelectorAll('.zb,.za,.zc').forEach(x => x.classList.remove('zb', 'za', 'zc'));
+      paint();
+      box.ondragstart = e => { const r = e.target.closest('.ar'); if (!r || r.classList.contains('lk')) return e.preventDefault(); drag = +r.dataset.id; e.dataTransfer.setData('text/plain', 'x'); e.dataTransfer.effectAllowed = 'move' };
+      box.ondragover = e => { if (drag == null) return; const r = e.target.closest('.ar'), h = e.target.closest('.ah'); if (!r && !h) return; e.preventDefault(); clr(); (r || h).classList.add(r ? zone(e, r) : 'zc') };
+      box.ondragend = () => { drag = null; clr() };
+      box.ondrop = e => {
+        e.preventDefault(); const r = e.target.closest('.ar'), h = e.target.closest('.ah'), z = r && zone(e, r), id = drag; drag = null; clr();
+        const s = loc(W, n => n.id === id); if (!s || !(r || h)) return;
+        if (h) { s.l.splice(s.i, 1); W[h.dataset.sec].push(s.n); return paint() }
+        const tid = +r.dataset.id; if (inside(s.n, tid)) return;
+        s.l.splice(s.i, 1);
+        const t = loc(W, n => n.id === tid);
+        if (z === 'zc') t.n.children.push(s.n); else t.l.splice(t.i + (z === 'za' ? 1 : 0), 0, s.n);
+        paint()
+      }
+    }
+
+    /* ---------- commit: apply a working tree to disk, then implicit refresh ---------- */
+    async function commit(W) {
+      if (!await ensureWrite()) throw new Error('Docs folder is not connected');
+      S.mode === 'singleFolder' ? await commitManual(W) : await commitFolders(W);
+      await load()
+    }
+
+    async function commitManual(W) {
+      const all = flat(allN(W)), keep = new Set(all.map(n => n.file).filter(Boolean));
+      for (const n of all) if (n._new) { const p = await uniq(['pages'], n._new.nm); await write(p, n._new.text); n.file = p; delete n._new }
+      const pd = await dirAt(['pages']);
+      for (const o of flat(allN(S.T))) if (o.file && !keep.has(o.file)) try { await pd.removeEntry(o.file.split('/').pop()) } catch { }
+      S.tree = Object.fromEntries(DOM.map(d => [d, strip(W[d])])); await save()
+    }
+
+    async function commitFolders(W) {
+      const ev = []; for (const d of DOM) { try { await walk(await dirAt([DT[d]]), DT[d] + '/', ev, 1) } catch { } }
+      const E = new Set(ev), EL = new Set(ev.map(x => x.toLowerCase())), oldN = flat(allN(S.T)), wN = [];
+      // 1) target location of every node in the new tree: children go in a folder named after their parent
+      const plan = (l, dir) => {
+        for (const n of l) {
+          let base, ext = '';
+          if (n.key) { base = n.rn || n.key.split('/').pop(); ext = n.file ? n.file.slice(n.key.length) : '' }
+          else { ext = n._new.nm.match(/\.[^.]+$/)?.[0] || ''; const b0 = n._new.nm.slice(0, n._new.nm.length - ext.length); base = b0; for (let i = 1; E.has(dir + base + ext);)base = `${b0}_${++i}`; E.add(dir + base + ext) }
+          n.tk = dir + base; n.ext = ext; wN.push(n); plan(n.children, n.tk + '/')
+        }
+      };
+      DOM.forEach(d => plan(W[d], DT[d] + '/'));
+      // 2) which files move or go away (a page's images move with it; images of a deleted page are deleted)
+      const by = new Map(wN.filter(n => n.key).map(n => [n.key, n])), pf = new Set(oldN.map(n => n.file).filter(Boolean)), moves = [], dels = [];
+      for (const o of oldN) if (o.file) { const w = by.get(o.key); if (!w) dels.push(o.file); else if (w.tk + w.ext !== o.file) moves.push([o.file, w.tk + w.ext]) }
+      for (const p of ev) {
+        if (pf.has(p)) continue;
+        let ow = null; for (const o of oldN) if (p.startsWith(o.key + '/') && (!ow || o.key.length > ow.key.length)) ow = o;
+        if (!ow) continue; const w = by.get(ow.key);
+        if (!w) dels.push(p); else { const np = w.tk + p.slice(ow.key.length); if (np !== p) moves.push([p, np]) }
+      }
+      for (const [o, n] of moves) if ((E.has(n) || EL.has(n.toLowerCase())) && n !== o) throw new Error('Target already exists: ' + n);
+      // 3) copy first, delete last, so a failure never loses a file
+      for (const n of wN) if (n._new) { await write(n.tk + n.ext, n._new.text); n.file = n.tk + n.ext; delete n._new }
+      for (const [o, n] of moves) await write(n, await (await fh(o)).getFile());
+      const gone = [...moves.map(m => m[0]), ...dels];
+      for (const p of gone) { const s = p.split('/'), f = s.pop(); await (await dirAt(s)).removeEntry(f) }
+      const ds = new Set(); for (const p of gone) { const s = p.split('/').slice(0, -1); while (s.length > 1) { ds.add(s.join('/')); s.pop() } }
+      for (const d of [...ds].sort((a, b) => b.length - a.length)) { const s = d.split('/'), n = s.pop(); try { await (await dirAt(s)).removeEntry(n) } catch { } }
+      const mv = new Map(moves); if (mv.has(S.cur)) { S.cur = mv.get(S.cur); location.hash = '#' + encodeURIComponent(S.cur) }
+    }
+
+    /* ---------- add docs ---------- */
+    const h1 = t => (t.match(/^#\s+(.+)/m) || [])[1];
+    async function addFiles(l) {
+      const fs = [...l].filter(f => /\.(md|markdown)$/i.test(f.name));
+      if (!fs.length) return toast('Only .md files can be added');
+      if (!await ensureWrite() || !S.T) return;
+      const one = fs.length === 1;
+      modal(`Add ${one ? 'doc' : fs.length + ' docs'}`, `<div class="hint">${esc(fs.map(f => f.name).join(', '))}</div>
+    <label>Section<select id="pd">${DOM.map(d => `<option value="${d}">${IC[d]} ${DT[d]}</option>`).join('')}</select></label>
+    <label class="opt" style="margin-top:12px"><input type="radio" name="lv" value="top" checked><span><b>Top level</b> — no parent, listed directly under the section</span></label>
+    <label class="opt"><input type="radio" name="lv" value="sub"><span><b>Sub level</b> — next, drag it to the exact spot (child or sibling of any page)</span></label>
+    ${one && S.mode === 'singleFolder' ? '<label>Title<input id="pt"></label>' : ''}`, 'Continue', async r => {
+        const dom = r.querySelector('#pd').value, sub = r.querySelector('input[name=lv]:checked').value === 'sub', W = cloneT(S.T), nn = [];
+        for (const f of fs) {
+          const text = await f.text(), nm = f.name.replace(/[<>:"/\\|?*]/g, '_');
+          nn.push({ id: ++uid, name: S.mode === 'singleFolder' ? (one && r.querySelector('#pt')?.value.trim()) || h1(text) || pretty(nm) : nm, _new: { text, nm }, children: [] })
+        }
+        W[dom].push(...nn);
+        const done = async W => { await commit(W); toast('Added'); openPage(nn[0].file) };
+        if (!sub) { await done(W); return }
+        arrange('Place the new page' + (one ? '' : 's'), `Drag the highlighted page: drop in the middle of a page to make it a <b>child</b>, on its top/bottom edge to make it a <b>sibling</b>, or on a section bar for the top level.${S.mode === 'folders' ? ' (Folders mode lists siblings alphabetically.)' : ''}`, W, n => !!n._new, 'Add here', done);
+        return false
+      });
+      const pt = $('#pt'); if (pt) fs[0].text().then(t => pt.value = h1(t) || pretty(fs[0].name))
+    }
+
+    /* ---------- delete / reorganize / help ---------- */
+    async function del() {
+      const n = lc(allN(S.T), x => x.file === S.cur)?.n || flat(allN(S.T)).find(x => x.file === S.cur);
+      if (!n || !await ensureWrite()) return;
+      const k = cnt(n.children);
+      modal(`Delete “${esc(L(n))}”?`, `<p class="hint">This permanently deletes <code>${esc(n.file)}</code> from disk${S.mode === 'folders' ? ' (and images stored beside it)' : ''}. Git can restore it if it was committed.</p>
+    ${k ? `<label class="opt"><input type="radio" name="k" value="keep" checked><span>Keep its ${k} sub-page${k > 1 ? 's' : ''} — they move up one level</span></label><label class="opt"><input type="radio" name="k" value="del"><span>Delete the sub-page${k > 1 ? 's' : ''} too</span></label>` : ''}`, 'Delete', async r => {
+        const W = cloneT(S.T), x = loc(W, m => m.file === n.file), keep = r.querySelector('input[name=k]:checked')?.value === 'keep';
+        x.l.splice(x.i, 1, ...(keep ? x.n.children : []));
+        await commit(W); S.cur = null; toast('Deleted')
+      })
+    }
+
+    async function rename() {
+      const n = flat(allN(S.T)).find(x => x.file === S.cur);
+      if (!n || !await ensureWrite()) return;
+      const man = S.mode === 'singleFolder', cur = man ? n.name : n.key.split('/').pop();
+      modal('Rename page', `<label>${man ? 'Title' : 'File name'}<input id="rn" value="${esc(cur)}"></label><p class="hint">${man ? 'Changes the title shown in the tree; the file in <code>pages/</code> keeps its name.' : 'Renames the file on disk together with its children folder and images, so keep any number prefix to preserve the order. Links to it from other pages are not updated.'}</p>`, 'Rename', async r => {
+        let v = r.querySelector('#rn').value.trim().replace(/[<>:"/\\|?*]/g, '_');
+        if (!man) v = v.replace(/\.(md|markdown)$/i, '');
+        if (!v) throw new Error('Enter a name');
+        if (v === cur) return;
+        const W = cloneT(S.T), x = loc(W, m => m.file === n.file).n;
+        if (man) x.name = v; else x.rn = v;
+        await commit(W); toast('Renamed')
+      });
+      const i = $('#rn'); i.focus(); i.select(); i.onkeydown = e => { if (e.key === 'Enter') $('#modal [data-ok]').click() }
+    }
+
+    /* ---------- open in IDE (F4): editors register URL handlers, e.g. vscode://file/<path> ---------- */
+    const IDES = { vs: ['VS Code', p => 'vscode://file' + p], vi: ['VS Code Insiders', p => 'vscode-insiders://file' + p], cu: ['Cursor', p => 'cursor://file' + p], vc: ['VSCodium', p => 'vscodium://file' + p] };
+    const cfgGet = () => { try { return JSON.parse(localStorage.getItem('docs-ide')) } catch { return null } };
+    const cfgSet = c => { try { localStorage.setItem('docs-ide', JSON.stringify(c)) } catch { } };
+    // opened from Unity (file://) the portal knows its own absolute folder; over http the user types it once
+    const docsRoot = c => location.protocol === 'file:' ? decodeURIComponent(location.pathname).replace(/\/[^/]*$/, '').replace(/^\/(?=[A-Za-z]:)/, '') : (c.root || '').replace(/\\/g, '/').replace(/\/+$/, '');
+    function openIde() {
+      const c = cfgGet(); if (!c || !S.cur) return ideDialog(true);
+      const root = docsRoot(c); if (!root) return ideDialog(true);
+      const ap = root + '/' + S.cur, u = c.ide === 'custom' ? c.tpl.replaceAll('{path}', encodeURI(ap)).replaceAll('{enc}', encodeURIComponent(ap)) : IDES[c.ide][1](encodeURI((ap[0] === '/' ? '' : '/') + ap));
+      const a = document.createElement('a'); a.href = u; a.click();
+      toast(`Opening in ${c.ide === 'custom' ? 'your editor' : IDES[c.ide][0]}… allow the browser prompt if it asks`)
+    }
+    function ideDialog(go) {
+      const c = cfgGet() || { ide: 'vs', tpl: '', root: '' }, web = location.protocol !== 'file:';
+      modal('Editor settings', `<p class="hint">F4 opens the selected page in your editor through its URL handler, so the editor must be installed.</p>
+    <label>Editor<select id="ie">${Object.entries(IDES).map(([k, v]) => `<option value="${k}">${v[0]}</option>`).join('')}<option value="custom">Other (custom URL)…</option></select></label>
+    <input id="it" placeholder="URL template, e.g. rider://open?file={enc}" value="${esc(c.tpl)}" hidden>
+    ${web ? `<label>Absolute path of this docs folder<input id="ir" placeholder="C:/path/to/your/docs/folder" value="${esc(c.root)}"></label>` : ''}
+    <p class="hint">Custom templates can use <code>{path}</code> (plain path) or <code>{enc}</code> (URL-encoded path).</p>`, 'Save', async r => {
+        const ide = r.querySelector('#ie').value, tpl = r.querySelector('#it').value.trim(), root = r.querySelector('#ir')?.value.trim() || '';
+        if (ide === 'custom' && !/\{(path|enc)\}/.test(tpl)) throw new Error('The template needs {path} or {enc}');
+        if (web && !root) throw new Error('Enter the docs folder path');
+        cfgSet({ ide, tpl, root }); if (go && S.cur) setTimeout(openIde)
+      });
+      const ie = $('#ie'); ie.value = c.ide; const sh = () => $('#it').hidden = ie.value !== 'custom'; sh(); ie.onchange = sh
+    }
+
+    async function reorganize() {
+      if (!S.T || !await ensureWrite() || !S.T) return;
+      const W = cloneT(S.T), s0 = sig(W);
+      arrange('Reorganize docs', `Drag any page: drop in the middle of another page to make it a <b>child</b>, on its top/bottom edge to make it a <b>sibling</b>, or on a section bar for the top level.${S.mode === 'folders' ? ' Folders mode moves the files on disk (siblings stay alphabetical); relative links inside moved pages are not rewritten.' : ''}`, W, () => true, 'Apply', async W => {
+        if (sig(W) === s0) { toast('No changes'); return }
+        await commit(W); toast('Docs reorganized')
+      })
+    }
+
+    function help() {
+      modal('How to use these docs', `<div class="help">
+  <h4>Browsing</h4><ul><li>Use the tree on the left: <b>Design</b>, <b>Art</b> and <b>Scripting</b> hold pages, and any page can have child pages (click the ▶ to expand).</li>
+  <li>Press <kbd>/</kbd> to search. The first search indexes all pages, then it is instant. Click a result to open it.</li>
+  <li>Links between pages (<code>[text](other.md)</code>) work, and every page has its own address, so you can bookmark it.</li></ul>
+  <h4>Adding pages</h4><ul><li>Click <b>➕ Add docs</b> (or drop <code>.md</code> files onto the window) and pick the file(s).</li>
+  <li>Choose the section, then <b>Top level</b> (no parent) or <b>Sub level</b>.</li>
+  <li><b>Sub level</b> opens a window: drag the highlighted page onto another page — middle = child, top/bottom edge = sibling — then press <b>Add here</b>.</li>
+  <li>The portal refreshes by itself afterwards. The portal copies your file, so keep editing the copy inside the docs folder.</li></ul>
+  <h4>Editing</h4><ul><li>Open (select) a page and press <kbd>F4</kbd> to edit its <code>.md</code> file in your IDE. The first time you pick which editor (change it later in <b>☰ → Editor settings</b>). Save, switch back to the browser, and the page reloads by itself.</li></ul>
+  <h4>Deleting</h4><ul><li>Open (select) a page and press <kbd>Del</kbd>. You always get a confirmation, and if the page has children you choose to keep them (they move up) or delete them too.</li></ul>
+  <h4>Renaming</h4><ul><li>To rename the <b>project</b>, click its name at the top of the sidebar (or open the home page) and press <kbd>F2</kbd>; it is saved in the manifest for the whole team.</li><li>Open (select) a page and press <kbd>F2</kbd>. <b>Single Folder mode</b> changes the title shown in the tree. <b>Folders mode</b> renames the file on disk (with its children folder and images); keep the number prefix to keep the order.</li></ul>
+  <h4>Reorganizing</h4><ul><li><b>☰ → Reorganize</b> opens the same drag-and-drop window with every page movable. Press <b>Apply</b> to save.</li>
+  <li><b>Single Folder mode</b> stores the order in the manifest. <b>Folders mode</b> moves files on disk (children into a folder named after their parent) and sorts siblings alphabetically — prefix names with numbers (<code>01_Intro.md</code>) to control the order.</li></ul>
+  <h4>Refresh</h4><ul><li><b>☰ → Refresh</b> re-reads the folder. Use it after editing in your IDE or after a <code>git pull</code>.</li></ul>
+  <h4>Rich content</h4><ul><li><b>HTML</b> works inside pages (tables, <code>&lt;details&gt;</code>, images, <code>style</code> colours). Scripts and unsafe attributes are removed, and markdown is not parsed inside an HTML block.</li>
+  <li><b>Math:</b> <code>$E=mc^2$</code> inline or <code>$$ ... $$</code> as a centred block (KaTeX). It loads on first use; put a copy in <code>_vendor/katex/</code> to work offline. A lone price like <code>$5</code> is left alone; write <code>&#92;$</code> for a literal dollar before another one.</li>
+  <li><b>Spreadsheets:</b> use a code block whose language is <code>sheet</code> (add <code>header</code> after it to style the first row). Paste straight from Excel (tab-separated), or write rows with <code>|</code> or commas. Start a cell with <code>=</code> for a formula: <code>+ - * / ^ %</code>, comparisons, cells like <code>B2</code>, ranges like <code>B2:B9</code>, and SUM, AVERAGE, MIN, MAX, COUNT, PRODUCT, ROUND, FLOOR, CEIL, ABS, SQRT, POW, MOD, LOG, LN, EXP, IF, AND, OR, NOT. Hover a result to see its formula.</li></ul>
+  <h4>Shortcuts</h4><ul><li><kbd>/</kbd> search · <kbd>F2</kbd> rename page / project · <kbd>F4</kbd> edit in IDE · <kbd>Del</kbd> delete (they act on the page that is open).</li></ul>
+  <h4>Good to know</h4><ul><li>Commit the whole docs folder, including <code>_manifest.json</code>. Each teammate connects the folder once, in Chrome or Edge.</li>
+  <li>Images next to a page work with relative paths, e.g. <code>![](img/shot.png)</code>.</li></ul></div>`, 'Close', () => { }, { wide: 1, one: 1 })
+    }
+
+    /* ---------- wiring ---------- */
+    addEventListener('dragover', e => { if (e.dataTransfer?.types.includes('Files')) e.preventDefault() });
+    addEventListener('drop', e => { if (e.dataTransfer?.files.length) { e.preventDefault(); addFiles(e.dataTransfer.files) } });
+    document.addEventListener('click', e => {
+      const t = e.target; let el;
+      if (!t.closest('.mw')) $('#menu').hidden = true;
+      if (t.closest('#mbtn')) { $('#menu').hidden = !$('#menu').hidden; return }
+      if (el = t.closest('[data-a]')) { $('#menu').hidden = true; const a = el.dataset.a; return a === 'refresh' ? load().then(() => toast('Refreshed')) : a === 'reorg' ? reorganize() : a === 'ide' ? ideDialog(false) : help() }
+      if (el = t.closest('[data-open]')) { const sm = el.closest('summary'); if (sm) { e.preventDefault(); sm.parentElement.open = true } return openPage(el.dataset.open) }
+      if (el = t.closest('[data-reveal]')) return reveal(el.dataset.reveal);
+      if (el = t.closest('[data-copy]')) { navigator.clipboard.writeText(el.nextElementSibling.textContent); el.textContent = 'Copied!'; setTimeout(() => el.textContent = 'Copy', 1200); return }
+      if (el = t.closest('#view a[href]')) {
+        const h = el.getAttribute('href'); if (/^(https?:|mailto:)/.test(h)) return;
+        e.preventDefault(); const p = h.split('#')[0]; if (/\.md$/i.test(p)) openPage(resolve(S.cur || '', decodeURI(p)))
+      }
+    });
+    document.addEventListener('toggle', e => { const k = e.target.dataset?.k; if (k) e.target.open ? S.open.add(k) : S.open.delete(k) }, true);
+
+    $('#brand').onclick = () => S.T && home();
+    $('#brand').ondblclick = () => S.T && nameDialog(false);
+    $('#tgl').onclick = () => { S.all = !S.all; S.open.clear(); document.querySelectorAll('details.fold').forEach(d => d.open = S.all) };
+    $('#add').onclick = async () => {
+      const had = !!S.root;
+      if (!await ensureWrite()) return;
+      if (!had) return toast('Folder connected — click Add docs again');
+      if (S.T) $('#pick').click()
+    };
+    $('#pick').onchange = e => { addFiles(e.target.files); e.target.value = '' };
+    let st; $('#q').oninput = e => { clearTimeout(st); st = setTimeout(() => search(e.target.value), 180) };
+    $('#q').onfocus = () => { if (S.T) ensureIdx() };
+    addEventListener('focus', async () => { // coming back from the IDE: reload the open page if it changed
+      if (!S.cur || !S.T) return; const f = S.cur, old = S.cache.get(f); S.cache.delete(f);
+      try { const t = await read(f); if (t !== old && f === S.cur) { S.ip = null; const y = $('main').scrollTop; await openPage(f, 1); $('main').scrollTop = y } } catch { }
+    });
+    addEventListener('hashchange', () => { if (!S.T) return; const f = decodeURIComponent(location.hash.slice(1)); f ? f !== S.cur && openPage(f, 1) : home() });
+    addEventListener('keydown', e => {
+      const a = document.activeElement.tagName, free = !/INPUT|SELECT|TEXTAREA/.test(a), mo = !$('#modal').hidden;
+      if (e.key === '/' && free && !mo) { e.preventDefault(); $('#q').focus() }
+      if (e.key === 'Delete' && free && !mo && S.cur && S.T) del();
+      if (e.key === 'F2' && free && !mo && S.T) { e.preventDefault(); (document.activeElement.id === 'brand' || !S.cur) ? nameDialog(false) : rename() }
+      if (e.key === 'F4' && free && !mo && S.cur && S.T) { e.preventDefault(); openIde() }
+      if (e.key === 'Escape') { $('#menu').hidden = true; if (mo && !$('#modal').dataset.nc) $('#modal').hidden = true }
+    });
+
+    (async () => {
+      try { const h = await idb('get', KEY); if (h) { if (await h.queryPermission({ mode: 'readwrite' }) === 'granted') S.root = h; else S.pending = h } } catch { }
+      await load()
+    })();
+  </script>
+</body>
+
+</html>
