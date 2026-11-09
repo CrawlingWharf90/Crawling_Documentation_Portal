@@ -96,6 +96,7 @@ Create a docs folder anywhere, copy `crawling_documentation_portal.html` into it
 - The **Expand/Collapse** link under the search box opens or closes the whole tree.
 - Every page has its own address (`...#Design/Combat.md`), so you can bookmark it or share the link.
 - Links between pages work: `[see combat](Combat.md)` in a page opens that page.
+- Link to a section with `[text](Combat.md#melee-attacks)`, or inside the same page with `[text](#melee-attacks)`. The section name is the heading in lowercase, with spaces replaced by hyphens and punctuation removed (`## Melee Attacks` becomes `#melee-attacks`). Repeated headings get `-1`, `-2`, and so on.
 - Click the project name at the top of the sidebar to return to the home page.
 
 ### Searching
@@ -200,6 +201,10 @@ A `<style>` block works too, but it only affects the page it is written in. `bod
   h1 { color: orange; }
 </style>
 ```
+
+**Custom tags** such as `<dialogue-container>` or `<dialogue>` are kept as elements. A tag counts as custom if its name contains a hyphen, or if the page also closes it (`</dialogue>`), so text like `List<int>` stays plain text. Custom tags written on their own line are block elements, markdown inside them still renders, and you can style them with a `<style>` block (for example `dialogue { display: flex; }`). Event attributes such as `onclick` and `id` are removed.
+
+A line that ends with two spaces or a backslash becomes a line break.
 
 ### Maths (LaTeX)
 

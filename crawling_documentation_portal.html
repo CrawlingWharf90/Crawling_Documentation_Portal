@@ -799,6 +799,10 @@
     .md .mermaid { background: var(--code); border: 1px solid var(--bd); border-radius: 8px; padding: 14px; margin-bottom: 14px; text-align: center; overflow-x: auto; white-space: pre; font: 12.5px Consolas, monospace; color: var(--mu) }
     .md .mermaid svg { max-width: 100%; height: auto; display: block; margin: 0 auto }
     .md .mermaid.texerr { color: var(--dg) }
+    .md blockquote > :first-child { margin-top: 0 }
+    .md blockquote > :last-child { margin-bottom: 0 }
+    .md blockquote blockquote { margin: 10px 0 0; background: rgba(255,255,255,.04) }
+    .md [data-ut] { display: block }
     .texerr {
       font-family: Consolas, monospace;
       color: var(--dg)
@@ -1062,36 +1066,50 @@
       $('main').scrollTop = 0
     }
 
-    async function openPage(file, fromHash) {
+    // Section links: headings get ids ("h-" + slug, so they can never clash with the app's own ids); the page hash is #<file>#<section>
+    const slug = t => t.toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').trim().replace(/\s+/g, '-');
+    const hashParts = () => { const h = location.hash.slice(1), i = h.indexOf('#'); try { return [decodeURIComponent(i < 0 ? h : h.slice(0, i)), i < 0 ? '' : h.slice(i + 1)] } catch { return ['', ''] } };
+    function goAnchor(a) {
+      let t = a; try { t = decodeURIComponent(a) } catch { }
+      const el = document.getElementById('h-' + slug(t));
+      if (!el) return toast('Section not found: ' + t);
+      el.scrollIntoView({ block: 'start' });
+      try { history.replaceState(null, '', '#' + encodeURIComponent(S.cur) + '#' + a) } catch { }
+    }
+    async function openPage(file, fromHash, anchor) {
       S.cur = file; const tk = ++S.tk;
       const ch = chain(file); document.querySelectorAll('details.fold').forEach(d => { if (ch.includes(d.dataset.k)) d.open = true });
-      if (!fromHash) location.hash = '#' + encodeURIComponent(file);
+      if (!fromHash) location.hash = '#' + encodeURIComponent(file) + (anchor ? '#' + anchor : '');
       $('#q').value = ''; mark(); document.querySelector('.item.on')?.scrollIntoView({ block: 'nearest' });
       let t;
       try { t = await read(file) } catch { if (tk === S.tk) $('#view').innerHTML = `<p>Could not load <code>${esc(file)}</code>.</p>`; return }
       if (tk !== S.tk) return;
       const p = pages().find(x => x.file === file);
       $('#view').innerHTML = `<div class="crumb">${esc(p?.crumb || '')}</div><article class="md">${md(t)}</article>`;
-      fixImgs(file); renderMath(); renderMermaid(); $('main').scrollTop = 0
+      fixImgs(file); renderMath(); renderMermaid(); $('main').scrollTop = 0; if (anchor) goAnchor(anchor)
     }
 
     function route() {
-      const f = decodeURIComponent(location.hash.slice(1));
-      f && pages().some(p => p.file === f) ? openPage(f, 1) : home()
+      const [f, a] = hashParts();
+      f && pages().some(p => p.file === f) ? openPage(f, 1, a) : home()
     }
 
     /* ---------- markdown renderer: sanitized HTML, LaTeX ($..$ / $$..$$), sheet blocks with formulas ---------- */
-    let MI = [];
+    let MI = [], UT = new Set();
     const OKT = new Set('div p table thead tbody tfoot tr th td caption colgroup col details summary ul ol li dl dt dd pre blockquote hr br h1 h2 h3 h4 h5 h6 center section figure figcaption img span a b i em strong u s del ins kbd sub sup mark small code'.split(' '));
     const OKA = new Set('href src alt title width height align valign colspan rowspan open style'.split(' '));
     // whitelist sanitizer: unknown tags are shown as text, unknown attributes dropped, no scripts / javascript: / url() styles
-    function cleanTag(m) {
-      const t = m.match(/^<(\/?)([a-z][a-z0-9]*)([\s\S]*?)\/?>$/i);
-      if (!t || !OKT.has(t[2].toLowerCase())) return null;
-      const n = t[2].toLowerCase(); if (t[1]) return `</${n}>`;
+    // "user tags" = custom elements (hyphenated) or any tag the page also closes (</dialogue>), so List<int> stays plain text
+    const BLK = new Set('script style iframe object embed link meta base form input button textarea select option svg math template noscript audio video source track canvas frame frameset applet head body html title dialog slot portal'.split(' '));
+    const isCust = n => { n = n.toLowerCase(); return !OKT.has(n) && !BLK.has(n) && (n.includes('-') || UT.has(n)) };
+    const isCT = l => /^\s*(?:<\/?[a-z][a-z0-9-]*(?:\s[^<>]*)?\/?>\s*)+$/i.test(l) && [...l.matchAll(/<\/?([a-z][a-z0-9-]*)/gi)].every(x => isCust(x[1])); // a line made only of user tags
+    function cleanTag(m, blk) {
+      const t = m.match(/^<(\/?)([a-z][a-z0-9-]*)([\s\S]*?)\/?>$/i);
+      if (!t || !(OKT.has(t[2].toLowerCase()) || isCust(t[2]))) return null;
+      const n = t[2].toLowerCase(); if (t[1]) return `</${n}>`; const cust = !OKT.has(n);
       let a = '';
       for (const [, k, v] of t[3].matchAll(/([a-z-]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'>]+))?/gi)) {
-        const key = k.toLowerCase(); if (!OKA.has(key)) continue;
+        const key = k.toLowerCase(); if (!OKA.has(key) && !(cust && /^[a-z][a-z0-9-]*$/.test(key) && !/^(on|id$|class$|srcdoc|formaction)/.test(key))) continue;
         const val = v === undefined ? '' : v.replace(/^["']|["']$/g, ''), cv = val.replace(/[\s\u0000-\u001f]/g, '');
         if (key === 'open') { a += ' open'; continue }
         if (key === 'style') { if (/url\(|expression|@import|javascript:/i.test(cv)) continue }
@@ -1102,9 +1120,9 @@
         }
         a += ` ${key}="${esc(val)}"`
       }
-      return `<${n}${a}>`
+      return `<${n}${a}${blk && cust ? ' data-ut' : ''}>`
     }
-    const cleanBlock = h => h.replace(/<!--[\s\S]*?-->/g,'').replace(/<\/?[a-z][^>]*>/gi,m=>cleanTag(m)??esc(m));
+    const cleanBlock = (h, blk) => h.replace(/<!--[\s\S]*?-->/g,'').replace(/<\/?[a-z][^>]*>/gi,m=>cleanTag(m,blk)??esc(m));
 
       function inl(s) {
         s = s.replace(/<!--[\s\S]*?-->/g,'').replace(/<\/?[a-z][^>]*>/gi,m=>{const c=cleanTag(m);if(!c)return m;MI.push(c);return `\u0002${MI.length-1}\u0002`});
@@ -1117,7 +1135,7 @@
 
 const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center|dl|hr|h[1-6])(?=[\s>\/])/i;
     function md(src) {
-      MI = []; const code = [], keep = h => (code.push(h), `\u0000${code.length - 1}\u0000`), mi = h => (MI.push(h), `\u0002${MI.length - 1}\u0002`);
+      MI = []; const seen = {}, code = [], keep = h => (code.push(h), `\u0000${code.length - 1}\u0000`), mi = h => (MI.push(h), `\u0002${MI.length - 1}\u0002`);
       src = src.replace(/\r/g, '').replace(/^---\n[\s\S]*?\n---\n/, '')
         .replace(/```([\w-]*)([^\n]*)\n([\s\S]*?)```/g, (_, l, o, c) => keep(l === 'sheet' ? sheet(c, /header/i.test(o)) : /^mermaid$/i.test(l) ? `<div class="mermaid">${esc(c.replace(/\n$/, ''))}</div>` : `<pre><button class="copy" data-copy>Copy</button><code>${esc(c.replace(/\n$/, ''))}</code></pre>`))
         .replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, (_, css) => '\n' + keep(`<style>${scopeCss(css)}</style>`) + '\n')
@@ -1125,15 +1143,19 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
         .replace(/\\\$/g, '\u0001')
         .replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => `\n${keep(`<div class="tex" data-d="1">${esc(t.trim())}</div>`)}\n`)
         .replace(/\$(?!\s)((?:\\.|[^$\\\n])+?)(?<!\s)\$(?!\d)/g, (_, t) => mi(`<span class="tex">${esc(t)}</span>`));
+      UT = new Set([...src.matchAll(/<\/([a-z][a-z0-9-]*)\s*>/gi)].map(x => x[1].toLowerCase()));
       const rs = s => s.replace(/\u0000(\d+)\u0000/g, (_, n) => code[n]).replace(/\u0002(\d+)\u0002/g, (_, n) => MI[n]).replace(/\u0001/g, () => '$');
-      const out = [], X = src.split('\n'), LI = /^\s*([-*+]|\d+\.)\s/; let i = 0, m;
+      const LI = /^\s*([-*+]|\d+\.)\s/;
+      const parse = X => { // block parser; blockquotes call it again on their content, so quotes nest and can hold lists, headings, code...
+      const out = []; let i = 0, m;
       while (i < X.length) {
         const l = X[i];
         if (!l.trim()) { i++; continue }
         if (m = l.match(/^\u0000(\d+)\u0000$/)) { out.push(code[m[1]]); i++ }
-        else if (m = l.match(/^(#{1,6})\s+(.*)/)) { out.push(`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`); i++ }
+        else if (m = l.match(/^(#{1,6})\s+(.*)/)) { const h = inl(m[2]), sg = slug(h.replace(/<[^>]*>/g, '').replace(/&(amp|lt|gt|quot);/g, '')); let id = ''; if (sg) { seen[sg] = (seen[sg] ?? -1) + 1; id = ` id="h-${sg}${seen[sg] ? '-' + seen[sg] : ''}"` } out.push(`<h${m[1].length}${id}>${h}</h${m[1].length}>`); i++ }
         else if (/^(-{3,}|\*{3,}|_{3,})$/.test(l.trim())) { out.push('<hr>'); i++ }
-        else if (l[0] === '>') { const b = []; while (i < X.length && X[i][0] === '>') b.push(X[i++].replace(/^>\s?/, '')); out.push(`<blockquote>${inl(b.join(' '))}</blockquote>`) }
+        else if (/^ {0,3}>/.test(l)) { const b = []; while (i < X.length && /^ {0,3}>/.test(X[i])) b.push(X[i++].replace(/^ {0,3}>\s?/, '')); out.push(`<blockquote>${parse(b)}</blockquote>`) }
+        else if (isCT(l)) { out.push(cleanBlock(l, 1)); i++ }
         else if (m = l.match(HB)) {
           const tg = m[1].toLowerCase(), o = new RegExp('<' + tg + '(?=[\\s>/])', 'gi'), c = new RegExp('</' + tg + '\\s*>', 'gi'), b = []; let d = 0;
           do { const t = X[i++]; b.push(t); d += (t.match(o) || []).length - (t.match(c) || []).length } while (i < X.length && d > 0 && tg !== 'hr' && !(tg === 'p' && !X[i].trim()));
@@ -1145,9 +1167,10 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
           const h = row(l), b = []; i += 2; while (i < X.length && X[i].includes('|')) b.push(row(X[i++]));
           out.push(`<table><thead><tr>${h.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${b.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`)
         }
-        else { const p = []; do p.push(X[i++]); while (i < X.length && X[i].trim() && !/^(#{1,6}\s|>|\u0000\d+\u0000$)/.test(X[i]) && !LI.test(X[i])); out.push(`<p>${inl(p.join(' '))}</p>`) }
+        else { const p = []; do p.push(X[i++]); while (i < X.length && X[i].trim() && !/^(#{1,6}\s|>|\u0000\d+\u0000$)/.test(X[i]) && !LI.test(X[i]) && !isCT(X[i])); out.push(`<p>${inl(p.map(t => /( {2,}|\\)$/.test(t) ? t.replace(/( {2,}|\\)$/, '') + '<br>' : t).join(' '))}</p>`) }
       }
-      return out.join('\n')
+      return out.join('\n') };
+      return parse(src.split('\n'))
     }
 
     /* ---------- sheets: a fenced block tagged "sheet" (tab, | or comma separated) with =formulas ---------- */
@@ -1529,7 +1552,8 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
       modal('How to use these docs', `<div class="help">
   <h4>Browsing</h4><ul><li>Use the tree on the left: <b>Design</b>, <b>Art</b> and <b>Scripting</b> hold pages, and any page can have child pages (click the ▶ to expand).</li>
   <li>Press <kbd>/</kbd> to search. The first search indexes all pages, then it is instant. Click a result to open it.</li>
-  <li>Links between pages (<code>[text](other.md)</code>) work, and every page has its own address, so you can bookmark it.</li></ul>
+  <li>Links between pages (<code>[text](other.md)</code>) work, and every page has its own address, so you can bookmark it.</li>
+  <li>Link to a section with <code>[text](Page.md#section-name)</code>, or inside the same page with <code>[text](#section-name)</code>. The section name is the heading in lowercase, spaces turned into hyphens, punctuation removed (<code>## Stock Section</code> → <code>#stock-section</code>).</li></ul>
   <h4>Adding pages</h4><ul><li>Click <b>➕ Add docs</b> and choose <b>Upload Local File</b> (or drop <code>.md</code> files onto the window), or <b>New File</b> to start from a template: give the page a name and it is created for you.</li><li>Templates are the <code>.md</code> files in <code>Resources/Markdown</code> (with more than one you pick which; <code>{{title}}</code> inside a template is replaced by the name). Create templates in Unity with <b>Tools → Docs → Create Docs File Template</b>.</li>
   <li>Choose the section, then <b>Top level</b> (no parent) or <b>Sub level</b>.</li>
   <li><b>Sub level</b> opens a window: drag the highlighted page onto another page — middle = child, top/bottom edge = sibling — then press <b>Add here</b>.</li>
@@ -1540,7 +1564,7 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
   <h4>Reorganizing</h4><ul><li><b>☰ → Reorganize</b> opens the same drag-and-drop window with every page movable. Press <b>Apply</b> to save.</li>
   <li><b>Single Folder mode</b> stores the order in the manifest. <b>Folders mode</b> moves files on disk (children into a folder named after their parent) and sorts siblings alphabetically — prefix names with numbers (<code>01_Intro.md</code>) to control the order.</li></ul>
   <h4>Refresh</h4><ul><li><b>☰ → Refresh</b> re-reads the folder. Use it after editing in your IDE or after a <code>git pull</code>.</li></ul>
-  <h4>Rich content</h4><ul><li><b>HTML</b> works inside pages (tables, <code>&lt;details&gt;</code>, images, <code>style</code> colours). A <code>&lt;style&gt;</code> block works too but only affects that page (<code>body</code> means the page area). Scripts and unsafe attributes are removed, and markdown is not parsed inside an HTML block.</li>
+  <h4>Rich content</h4><ul><li><b>HTML</b> works inside pages (tables, <code>&lt;details&gt;</code>, images, <code>style</code> colours). A <code>&lt;style&gt;</code> block works too but only affects that page (<code>body</code> means the page area). Custom tags such as <code>&lt;dialogue&gt;</code> (any tag the page also closes, like <code>&lt;/dialogue&gt;</code>) are kept as elements: block by default when written on their own line, and markdown inside them still renders; style them with a <code>&lt;style&gt;</code> block, e.g. <code>dialogue { display: flex }</code>. Scripts and unsafe attributes are removed, and markdown is not parsed inside an HTML block.</li>
   <li><b>Diagrams:</b> a code block whose language is <code>mermaid</code> (flowcharts, sequence diagrams, ...) is drawn with Mermaid, loaded on first use; put a copy in <code>_vendor/mermaid/</code> to work offline.</li>
   <li><b>Math:</b> <code>$E=mc^2$</code> inline or <code>$$ ... $$</code> as a centred block (KaTeX). It loads on first use; put a copy in <code>_vendor/katex/</code> to work offline. A lone price like <code>$5</code> is left alone; write <code>&#92;$</code> for a literal dollar before another one.</li>
   <li><b>Spreadsheets:</b> use a code block whose language is <code>sheet</code> (add <code>header</code> after it to style the first row). Paste straight from Excel (tab-separated), or write rows with <code>|</code> or commas. Start a cell with <code>=</code> for a formula: <code>+ - * / ^ %</code>, comparisons, cells like <code>B2</code>, ranges like <code>B2:B9</code>, and SUM, AVERAGE, MIN, MAX, COUNT, PRODUCT, ROUND, FLOOR, CEIL, ABS, SQRT, POW, MOD, LOG, LN, EXP, IF, AND, OR, NOT. Hover a result to see its formula.</li></ul>
@@ -1564,7 +1588,8 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
       if (el = t.closest('[data-copy]')) { navigator.clipboard.writeText(el.nextElementSibling.textContent); el.textContent = 'Copied!'; setTimeout(() => el.textContent = 'Copy', 1200); return }
       if (el = t.closest('#view a[href]')) {
         const h = el.getAttribute('href'); if (/^(https?:|mailto:)/.test(h)) return;
-        e.preventDefault(); const p = h.split('#')[0]; if (/\.md$/i.test(p)) openPage(resolve(S.cur || '', decodeURI(p)))
+        e.preventDefault(); const i = h.indexOf('#'), a = i < 0 ? '' : h.slice(i + 1), p = (i < 0 ? h : h.slice(0, i)).replace(/\/+$/, '');
+        if (!p) { if (a) goAnchor(a) } else if (/\.md$/i.test(p)) { const f = resolve(S.cur || '', decodeURI(p)); f === S.cur && a ? goAnchor(a) : openPage(f, 0, a) }
       }
     });
     document.addEventListener('toggle', e => { const k = e.target.dataset?.k; if (k) e.target.open ? S.open.add(k) : S.open.delete(k) }, true);
@@ -1583,7 +1608,7 @@ const HB = /^\s*<(div|p|table|details|ul|ol|pre|blockquote|section|figure|center
       if (!S.cur || !S.T) return; const f = S.cur, old = S.cache.get(f); S.cache.delete(f);
       try { const t = await read(f); if (t !== old && f === S.cur) { S.ip = null; const y = $('main').scrollTop; await openPage(f, 1); $('main').scrollTop = y } } catch { }
     });
-    addEventListener('hashchange', () => { if (!S.T) return; const f = decodeURIComponent(location.hash.slice(1)); f ? f !== S.cur && openPage(f, 1) : home() });
+    addEventListener('hashchange', () => { if (!S.T) return; const [f, a] = hashParts(); f ? (f !== S.cur ? openPage(f, 1, a) : a && goAnchor(a)) : home() });
     addEventListener('keydown', e => {
       const a = document.activeElement.tagName, free = !/INPUT|SELECT|TEXTAREA/.test(a), mo = !$('#modal').hidden;
       if (e.key === '/' && free && !mo) { e.preventDefault(); $('#q').focus() }
