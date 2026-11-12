@@ -8,23 +8,61 @@ using Debug = UnityEngine.Debug;
 
 /// <summary>
 /// Adds a Tools > Docs menu to the Unity Editor:
-///   Open Documentation     opens the portal in the browser
-///   Reveal Docs Folder     shows the portal file in the file explorer
+///   Open Documentation          opens the portal in the browser
+///   Reveal Docs Folder          shows the portal file in the file explorer
 ///   ----------------------
-///   Create Docs Folder     creates Docs~ (with Resources/Markdown/new_file.md) and copies the portal from the package
-///   Create Docs File Template  asks for a name, creates an empty .md template in Docs~/Resources/Markdown and opens it in your IDE
+///   Create Docs Folder          creates Docs~ (with Resources/Markdown/new_file.md) and copies the portal from the package
+///   Create Docs File Template   asks for a name, creates an empty .md template in Docs~/Resources/Markdown and opens it in your IDE
 /// </summary>
 public static class DocsPortalMenu
 {
     const string DocsFolderName = "Docs~";
+    const string PackageHiddenFolder = "Portal~";
     const string PortalFileName = "crawling_documentation_portal.html";
-
-    static string ProjectRoot => Directory.GetParent(UnityEngine.Application.dataPath).FullName;
     const string DefaultTemplateName = "new_file.md";
 
+    static string ProjectRoot => Directory.GetParent(Application.dataPath).FullName;
     static string DocsFolder => Path.Combine(ProjectRoot, DocsFolderName);
     static string TemplatesFolder => Path.Combine(DocsFolder, "Resources", "Markdown");
     static string PortalPath => Path.GetFullPath(Path.Combine(DocsFolder, PortalFileName));
+
+    // Automatically keeps Docs~/crawling_documentation_portal.html in sync whenever the UPM package updates
+    [InitializeOnLoadMethod]
+    static void AutoSyncPortalWithPackage()
+    {
+        if (!File.Exists(PortalPath)) return;
+
+        string sourcePath = GetPackageHtmlPath();
+        if (string.IsNullOrEmpty(sourcePath) || !File.Exists(sourcePath)) return;
+
+        try
+        {
+            string packageHtml = File.ReadAllText(sourcePath);
+            string localHtml = File.ReadAllText(PortalPath);
+            if (!string.Equals(packageHtml, localHtml, StringComparison.Ordinal))
+            {
+                File.Copy(sourcePath, PortalPath, true);
+                Debug.Log($"[Docs] Updated {PortalFileName} in {DocsFolderName} to match the installed UPM package.");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[Docs] Could not auto-sync portal HTML: {e.Message}");
+        }
+    }
+
+    static string GetPackageHtmlPath()
+    {
+        var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(DocsPortalMenu).Assembly);
+        if (packageInfo == null) return null;
+
+        // Prefer the hidden Portal~ folder so Unity never requires a .meta file for the HTML
+        string hiddenPath = Path.Combine(packageInfo.resolvedPath, PackageHiddenFolder, PortalFileName);
+        if (File.Exists(hiddenPath)) return hiddenPath;
+
+        // Fallback to the package root if placed directly in UNITY/
+        return Path.Combine(packageInfo.resolvedPath, PortalFileName);
+    }
 
     [MenuItem("Tools/Docs/Open Documentation", false, 1)]
     static void Open()
@@ -32,17 +70,17 @@ public static class DocsPortalMenu
         var path = PortalPath;
         if (!File.Exists(path))
         {
-            if (EditorUtility.DisplayDialog("Docs", $"The portal was not found at:\n{path}\n\nCreate the Docs folder and copy it now?", "Create", "Cancel"))
+            if (EditorUtility.DisplayDialog("Docs", $"The portal was not found at:\n{path}\n\nCreate the Docs folder now?", "Create", "Cancel"))
                 CreateDocsFolder();
             return;
         }
 
         var url = new Uri(path).AbsoluteUri;
 
-        if (UnityEngine.Application.platform == UnityEngine.RuntimePlatform.WindowsEditor && TryLaunchChromium(url))
+        if (Application.platform == RuntimePlatform.WindowsEditor && TryLaunchChromium(url))
             return;
 
-        UnityEngine.Application.OpenURL(url);
+        Application.OpenURL(url);
     }
 
     [MenuItem("Tools/Docs/Reveal Docs Folder", false, 2)]
@@ -57,32 +95,21 @@ public static class DocsPortalMenu
     static void CreateDocsFolder()
     {
         if (File.Exists(PortalPath) &&
-            !EditorUtility.DisplayDialog("Docs", $"The portal already exists:\n{PortalPath}\n\nCopy the latest version from the package and replace it?\n(Your pages and _manifest.json are not touched.)", "Replace", "Cancel"))
+            !EditorUtility.DisplayDialog("Docs", $"The portal already exists:\n{PortalPath}\n\nReplace it with the version from the package?\n(Your pages and _manifest.json are not touched.)", "Replace", "Cancel"))
             return;
+
+        string sourceHtmlPath = GetPackageHtmlPath();
+        if (string.IsNullOrEmpty(sourceHtmlPath) || !File.Exists(sourceHtmlPath))
+        {
+            Debug.LogError($"[Docs] Source portal file not found inside the UPM package. Expected at: UNITY/{PackageHiddenFolder}/{PortalFileName}");
+            return;
+        }
 
         Directory.CreateDirectory(DocsFolder);
         EnsureTemplates();
 
-        // Dynamically find the UPM package location on disk
-        var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(DocsPortalMenu).Assembly);
-        if (packageInfo == null)
-        {
-            Debug.LogError("[Docs] Could not locate the UPM package. Ensure this script is within a loaded Unity package.");
-            return;
-        }
-
-        // Construct the source path to the HTML file inside the package
-        string sourceHtmlPath = Path.Combine(packageInfo.resolvedPath, PortalFileName);
-        
-        if (!File.Exists(sourceHtmlPath))
-        {
-            Debug.LogError($"[Docs] Source portal file not found at: {sourceHtmlPath}");
-            return;
-        }
-
-        // Copy the file locally to Docs~, replacing it if it already exists
         File.Copy(sourceHtmlPath, PortalPath, true);
-        Debug.Log($"[Docs] Portal copied from package to {PortalPath}");
+        Debug.Log($"[Docs] Portal initialized at {PortalPath}");
 
         if (EditorUtility.DisplayDialog("Docs", $"Docs folder ready:\n{DocsFolder}\n\nOpen the documentation now?", "Open", "Later"))
             Open();

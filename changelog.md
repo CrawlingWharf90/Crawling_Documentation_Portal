@@ -1,5 +1,18 @@
 # Changelog
 
+## V1.1.0
+
+### Added
+- Added automatic synchronization (`[InitializeOnLoadMethod]`) to `DocsPortalMenu.cs` so `Docs~/crawling_documentation_portal.html` automatically updates whenever the UPM package is updated.
+
+### Changed
+- Moved the packaged `crawling_documentation_portal.html` inside a hidden `UNITY/Portal~/` directory so Unity's Asset Database ignores it without requiring a `.meta` file.
+- Lowered the minimum Unity version requirement in `package.json` to `2019.4` for broader project compatibility.
+- Renamed and expanded the Editor assembly definition to `Crawling.DocsPortal.Editor.asmdef` to prevent assembly naming collisions.
+
+### Fixed
+- Fixed Unity Console error (`has no meta file, but it's in an immutable folder`) previously triggered by `crawling_documentation_portal.html` in the UPM package cache.
+
 ## V1.0.1
 
 ### Fixed
