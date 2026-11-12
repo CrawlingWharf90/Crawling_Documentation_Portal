@@ -14,9 +14,11 @@ A single-file documentation portal for game projects. Your docs are plain Markdo
 Crawling_Documentation_Portal/
 ├── crawling_documentation_portal.html   the portal itself (one file)
 ├── UNITY/
+│   ├── Portal~/
+│   │   └── crawling_documentation_portal.html  auto-synced copy (ignored by Unity)
 │   ├── package.json                     UPM package configuration
 │   ├── DocsPortalMenu.cs                Unity Editor menu (Tools > Docs)
-│   └── DocsPortal.asmdef                Editor-only assembly definition
+│   └── Crawling.DocsPortal.Editor.asmdef  Editor-only assembly definition
 └── LICENSE
 ```
 
@@ -38,9 +40,9 @@ Crawling_Documentation_Portal/
 
 In Unity, open **Window > Package Manager**. Click the **+** icon in the top-left corner, select **Add package from git URL...**, and paste the following URL:
 
-`https://github.com/CrawlingWharf90/Crawling_Documentation_Portal.git?path=/UNITY#v1.0.0`
+`https://github.com/CrawlingWharf90/Crawling_Documentation_Portal.git?path=/UNITY#v1.1.0`
 
-*(Note: Change `#v1.0.0` to the latest release tag).*
+*(Note: Change `#v1.1.0` to the latest release tag).*
 
 ### 2. Initialize the docs folder
 
@@ -48,7 +50,7 @@ In Unity choose **Tools > Docs > Create Docs Folder**. This:
 
 1. creates a `Docs~` folder next to `Assets/` (in the project root),
 2. creates `Docs~/Resources/Markdown/new_file.md`, an empty page template,
-3. copies `crawling_documentation_portal.html` from the installed package into `Docs~`.
+3. copies `crawling_documentation_portal.html` from the package's hidden `Portal~` folder into `Docs~`.
 
 > `Docs~` ends with a `~`, so Unity ignores it and never generates `.meta` files for your docs. Git still tracks it normally.
 
@@ -86,7 +88,7 @@ Commit the whole `Docs~` folder, **including `_manifest.json`**. Teammates then 
 
 ### Updating the portal
 
-Update the package version via the Unity Package Manager by changing the Git URL tag to the latest version. Then, run **Tools > Docs > Create Docs Folder** again and choose **Replace**. This copies the newest portal into your project. Your pages and `_manifest.json` are never touched.
+Update the package version via the Unity Package Manager by changing the Git URL tag to the latest version. The portal file inside your `Docs~` folder will **automatically synchronize** with the new package version the next time Unity compiles. Your Markdown pages and `_manifest.json` are never touched.
 
 ### Setup without Unity
 

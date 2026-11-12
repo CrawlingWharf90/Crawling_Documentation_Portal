@@ -1,17 +1,12 @@
 {
   "name": "com.crawlingwharf90.documentation-portal",
-  "version": "1.0.1",
   "displayName": "Crawling Documentation Portal",
-  "description": "A Unity UPM package for initializing a local HTML documentation portal without leaving Git dependencies behind.",
-  "unity": "2020.2",
+  "version": "1.0.0",
+  "unity": "2019.4",
+  "description": "A single-file documentation portal for game projects: Markdown pages in Design, Art and Scripting sections, search, templates, LaTeX, Mermaid diagrams and spreadsheet blocks. Adds Tools > Docs to the Unity Editor.",
+  "keywords": [ "documentation", "markdown", "docs", "wiki", "editor" ],
   "author": {
     "name": "CrawlingWharf90",
     "url": "https://github.com/CrawlingWharf90"
-  },
-  "keywords": [
-    "docs",
-    "documentation",
-    "portal",
-    "markdown"
-  ]
+  }
 }
