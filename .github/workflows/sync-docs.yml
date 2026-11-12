@@ -1,0 +1,23 @@
+name: Sync HTML to Engine Folders
+
+on:
+  push:
+    paths:
+      - 'crawling_documentation_portal.html'
+
+jobs:
+  copy-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Copy HTML to Unity folder
+        run: cp crawling_documentation_portal.html UNITY/crawling_documentation_portal.html
+        
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add UNITY/crawling_documentation_portal.html
+          git commit -m "chore: sync root HTML to Unity package folder" || echo "No changes to commit"
+          git push

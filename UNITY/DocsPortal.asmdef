@@ -1,0 +1,8 @@
+{
+    "name": "DocsPortal.Editor",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

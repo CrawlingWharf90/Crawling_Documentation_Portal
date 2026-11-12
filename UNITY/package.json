@@ -1,0 +1,17 @@
+{
+  "name": "com.crawlingwharf90.documentation-portal",
+  "version": "1.0.0",
+  "displayName": "Crawling Documentation Portal",
+  "description": "A Unity UPM package for initializing a local HTML documentation portal without leaving Git dependencies behind.",
+  "unity": "2020.2",
+  "author": {
+    "name": "Nadav Moscovici",
+    "url": "https://github.com/CrawlingWharf90"
+  },
+  "keywords": [
+    "docs",
+    "documentation",
+    "portal",
+    "markdown"
+  ]
+}
