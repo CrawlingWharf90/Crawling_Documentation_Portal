@@ -14,7 +14,9 @@ A single-file documentation portal for game projects. Your docs are plain Markdo
 Crawling_Documentation_Portal/
 ├── crawling_documentation_portal.html   the portal itself (one file)
 ├── UNITY/
-│   └── DocsPortalMenu.cs                Unity Editor menu (Tools > Docs)
+│   ├── package.json                     UPM package configuration
+│   ├── DocsPortalMenu.cs                Unity Editor menu (Tools > Docs)
+│   └── DocsPortal.asmdef                Editor-only assembly definition
 └── LICENSE
 ```
 
@@ -32,17 +34,21 @@ Crawling_Documentation_Portal/
 
 ## Setup (Unity)
 
-### 1. Install the menu script
+### 1. Install the package
 
-Copy `UNITY/DocsPortalMenu.cs` into any `Editor` folder of your Unity project, for example `Assets/Editor/DocsPortalMenu.cs`.
+In Unity, open **Window > Package Manager**. Click the **+** icon in the top-left corner, select **Add package from git URL...**, and paste the following URL:
 
-### 2. Create the docs folder
+`https://github.com/CrawlingWharf90/Crawling_Documentation_Portal.git?path=/UNITY#v1.0.0`
+
+*(Note: Change `#v1.0.0` to the latest release tag).*
+
+### 2. Initialize the docs folder
 
 In Unity choose **Tools > Docs > Create Docs Folder**. This:
 
 1. creates a `Docs~` folder next to `Assets/` (in the project root),
 2. creates `Docs~/Resources/Markdown/new_file.md`, an empty page template,
-3. downloads the latest `crawling_documentation_portal.html` into `Docs~`.
+3. copies `crawling_documentation_portal.html` from the installed package into `Docs~`.
 
 > `Docs~` ends with a `~`, so Unity ignores it and never generates `.meta` files for your docs. Git still tracks it normally.
 
@@ -80,7 +86,7 @@ Commit the whole `Docs~` folder, **including `_manifest.json`**. Teammates then 
 
 ### Updating the portal
 
-Run **Tools > Docs > Create Docs Folder** again and choose **Replace**. This downloads the newest portal. Your pages and `_manifest.json` are never touched.
+Update the package version via the Unity Package Manager by changing the Git URL tag to the latest version. Then, run **Tools > Docs > Create Docs Folder** again and choose **Replace**. This copies the newest portal into your project. Your pages and `_manifest.json` are never touched.
 
 ### Setup without Unity
 
@@ -178,7 +184,7 @@ Shortcuts act on the page that is currently open.
 | --- | --- |
 | **Tools > Docs > Open Documentation** | Opens the portal in the browser. |
 | **Tools > Docs > Reveal Docs Folder** | Shows the portal file in your file explorer. |
-| **Tools > Docs > Create Docs Folder** | Creates `Docs~`, the template folder, and downloads the latest portal. |
+| **Tools > Docs > Create Docs Folder** | Creates `Docs~`, the template folder, and copies the portal from the package. |
 | **Tools > Docs > Create Docs File Template** | Creates a new page template and opens it in your IDE. |
 
 ---
@@ -280,7 +286,7 @@ If a library can't be loaded, the page shows the raw source instead and the rest
 | A move or rename says "Target already exists" | A file with that name is already in the destination. Rename one of them first. |
 | `F4` does nothing | Check **menu > Editor settings** and that your editor is installed. Your browser may need to be allowed to open it. |
 | Maths or diagrams show as plain text | The library could not load. Check your connection or add a local copy under `_vendor/`. |
-| Create Docs Folder fails to download | Check your connection. The portal is downloaded from this repository's `main` branch. |
+| Package Manager cannot find `package.json` | Ensure you included `?path=/UNITY` in the Git URL when installing the package. |
 
 ---
 
